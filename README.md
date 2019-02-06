@@ -1,2 +1,0 @@
-# okura-restful-api
-
