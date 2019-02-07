@@ -19,4 +19,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::resource('items', 'ItemsController');
 Route::resource('items', 'ItemsController');
-Route::post('search','ItemsController@search');
+Route::post('items/search','ItemsController@search');
