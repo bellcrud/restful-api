@@ -3,11 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Item;
-use http\Env\Response;
 use Illuminate\Http\Request;
-
+use Symfony\Component\HttpFoundation\Response as StatusCode;//追加
+use Illuminate\Contracts\Validation\Validator;  // 追加
 class ItemsController extends Controller
 {
+    public function errorValidation (Validator $validator)
+    {
+        $response['errors']  = $validator->errors()->toArray();
+
+        abort_if($validator->fails(), StatusCode::HTTP_UNPROCESSABLE_ENTITY, $validator->errors(),$response['errors'] );
+
+    }
 
     /**
      * アイテム全件取得
@@ -15,9 +22,14 @@ class ItemsController extends Controller
      */
     public function index()
     {
+        $itemsCount = Item::itemCounter();
         $items = Item::all();
-        return response()->json(["items" => $items]);
 
+        //アイテムが存在していない場合メッセージを返す。
+        if($itemsCount == 0){
+            return response()->json(["message" => "アイテムが登録されていません"]);
+        }
+        return response()->json(["items" => $items, "count" => $itemsCount]);
     }
 
 
@@ -28,15 +40,21 @@ class ItemsController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request,[
-            'name' => 'max:100',
-            'description' => 'max:500',
-            'price' => 'digits_between:1,11',
+        $validator = \Validator::make($request->all(), [
+            'name' => 'max:100|required',
+            'description' => 'max:500|required',
+            'price' => 'digits_between:1,11|required',
+            'image' => 'required'
         ]);
+
+        if ($validator->fails()){
+            $this->errorValidation($validator);
+        }
 
         $params = $request->all();
 
         $item = Item::storeItem($params);
+        return response()->json(["item" => $item, "message" => "登録が完了しました。"]);
     }
 
 
@@ -56,7 +74,11 @@ class ItemsController extends Controller
         }
 
         $item = Item::find($id);
-        return response()->json($item);
+        if($item) {
+            return response()->json(['item' => $item]);
+        }else{
+            abort(404);
+        }
     }
 
 
@@ -68,14 +90,34 @@ class ItemsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->validate($request,[
-            'name' => 'max:100',
-            'description' => 'max:500',
-            'price' => 'digits_between:1,11',
-        ]);
-        $params = $request->all();
-        $item = Item::updateItem($params,$id);
-        return response()->json(["item" => $item]);
+        //idのバリデーションチェック
+        $input = ['id' => $id];
+        $rule = ['id' => 'integer'];
+        $validator = \Validator::make( $input, $rule );
+        if($validator->fails()) {
+            abort(421);
+        }
+
+        //対象データがあれば更新する
+        $item = Item::find($id);
+        if($item){
+            $validator = \Validator::make($request->all(), [
+                'name' => 'max:100',
+                'description' => 'max:500',
+                'price' => 'digits_between:1,11',
+            ]);
+
+            if ($validator->fails()){
+                $this->errorValidation($validator);
+            }
+
+            $params = $request->all();
+            $item = Item::updateItem($params,$id);
+            return response()->json(["item" => $item]);
+        }else{
+
+                abort(404);
+        }
     }
 
 
@@ -87,14 +129,27 @@ class ItemsController extends Controller
      */
     public function destroy($id)
     {
+        //idのバリデーション チェック
         $input = ['id' => $id];
         $rule = ['id' => 'integer'];
         $validator = \Validator::make( $input, $rule );
         if($validator->fails()) {
+            abort(421);
+        }
+
+        //対象データの存在確認
+
+        $item = Item::find($id);
+        if($item) {
+            //削除処理
+            Item::deleteItem($id);
+
+            $message = '削除しました.';
+            return \response()->json(['message' => $message]);
+        }else{
             abort(404);
         }
-        Item::deleteItem($id);
-        return '';
+
     }
 
 
@@ -108,10 +163,29 @@ class ItemsController extends Controller
         $params = $request->all();
         $keyword = $params['keyword'];
 
+        //キーワードがあれば検索する。なければメッセージのみを返す
         if(!is_null($keyword)){
+            $hitItemCount = Item::findByKeywordItem($keyword)->count();
+
             $hitItem = Item::findByKeywordItem($keyword);
-            return response()->json($hitItem);
+
+            //ヒットした件数が1件以上であれば、アイテム情報を返す。なければメッセージのみを返す
+            if($hitItemCount != 0){
+
+            return response()->json(['hitItem' => $hitItem, 'hitItemCount' => $hitItemCount]);
+
+            }else{
+
+                $messages = "キーワードに当てはまるアイテムがありませんでした。";
+
+                return response()->json(['messages' => $messages]);
+            }
+        }else{
+            $messages = "キーワードに当てはまるアイテムがありませんでした。";
+
+            return response()->json(['messages' => $messages]);
         }
+
 
     }
 

@@ -23,16 +23,17 @@ class Item extends Model
      */
     public static function storeItem($params)
     {
-        //DBファザードのtransactionメソッドのためロールバック・コミットは記述なし
+        //登録したアイテムを返すためインスタンスをtry前に生成
+        $item = new Item();
         try {
-            \DB::Transaction(function () use ($params) {
-                $item = new Item();
-                $item->fill($params);
-                $item->save();
+            \DB::Transaction(function () use ($params, $item) {
+                $item->fill($params)->save();
             });
         }catch(QueryException $exception){
             throw $exception;
         }
+
+        return $item;
     }
 
     /**
@@ -44,18 +45,17 @@ class Item extends Model
      */
     public static function updateItem($params, $id)
     {
+        $item = Item::find($id);
         //DBファザードのtransactionメソッドのためロールバック・コミットは記述なし
         try {
-            \DB::Transaction(function () use ($params,$id) {
-                $item = Item::find($id);
-                $item->fill($params);
-                $item->save();
+            \DB::Transaction(function () use ($params,$id,$item) {
+                $item->update($params);
             });
         }catch(QueryException $exception){
             throw $exception;
         }
         //変更後再度アイテム取得
-        $item = Item::find($id);
+        //$item = Item::find($id);
         return $item;
     }
 
@@ -88,6 +88,22 @@ class Item extends Model
     {
         $hitTodos = Item::where('name', 'LIKE', "%$keyword%")->get();
         return $hitTodos;
+    }
+
+    /**
+     * アイテムの登録数をカウントする
+     *
+     * @return int
+     */
+    public static function itemCounter()
+    {
+        return Item::all()->count();
+    }
+
+    public static function itemExist($id)
+    {
+        $items = new Item();
+        return $items->find($id);
     }
 
 }

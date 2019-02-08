@@ -51,10 +51,10 @@ class Handler extends ExceptionHandler
     {
 
         //HTTPステータスコード取得
-        $statusCode = $exception->getCode();
+        $statusCode = $exception->getStatusCode();
 
         //エラーメッセージ取得
-        $errorMessages = $exception->getMessage();
+        $details = $exception->getMessage();
 
         //400エラー
         if ($statusCode == StatusCode::HTTP_BAD_REQUEST) {
@@ -69,17 +69,23 @@ class Handler extends ExceptionHandler
         //404エラー
         elseif ($statusCode == StatusCode::HTTP_NOT_FOUND) {
 
-            $statusMessage = "Resource not found";
+            $statusMessage = "リソースがありませんでした";
         }
         //405エラー
         elseif ($statusCode == StatusCode::HTTP_METHOD_NOT_ALLOWED) {
 
             $statusMessage = "Method Not Allowed";
         }
+        //422エラー
+        elseif ($statusCode == StatusCode::HTTP_UNPROCESSABLE_ENTITY) {
+
+            $statusMessage = "バリデーション エラーです";
+            $details = $exception->getHeaders();
+        }
         //500エラー
         elseif ($statusCode == StatusCode::HTTP_INTERNAL_SERVER_ERROR) {
 
-            $statusMessage = "Internal Server Error";
+            $statusMessage = "サーバで予期しないエラーが発生しました";
         }
         //503エラー
         elseif ($statusCode == StatusCode::HTTP_SERVICE_UNAVAILABLE) {
@@ -94,10 +100,12 @@ class Handler extends ExceptionHandler
 
         };
 
-        return response()->json([
-            'status' => $statusCode,
-            'status_message' => $statusMessage,
-            'error_messages' => $errorMessages,
-        ],$statusCode);
+        $errors = [
+            'code' => $statusCode,
+            'message' => $statusMessage,
+            'details' => $details,
+        ];
+
+        return response()->json(['errors' => $errors]);
     }
 }
