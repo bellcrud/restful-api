@@ -2,10 +2,8 @@
 
 namespace App;
 
-use http\Env\Request;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
-use phpDocumentor\Reflection\DocBlock\Tags\Reference\Reference;
 
 
 class Item extends Model
@@ -100,10 +98,14 @@ class Item extends Model
         return Item::all()->count();
     }
 
-    public static function itemExist($id)
+    /**
+     * アイテム全件取得
+     * @return mixed
+     */
+    public static function itemAll()
     {
-        $items = new Item();
-        return $items->find($id);
+        $items = self::all();;
+        return $items;
     }
 
 }

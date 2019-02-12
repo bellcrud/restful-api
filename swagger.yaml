@@ -4,7 +4,7 @@ info:
   version: "1.0.0"
   title: "RESTfulなAPI"
 host: "localhost:8000"
-basePath: "/api"
+basePath: "/api/v1"
 tags:
   - name: "items"
     description: "itemsに関して、登録・編集・削除・検索"
@@ -58,32 +58,37 @@ paths:
                     format: int
                     example: 100
         '404':
-          description: "Not found"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    format: int
-                    example: 404
-                  status_message:
-                    type: string
-                    example: Resource not found
-                  error_messages:
-                    type: string
-                    example: Argument 3 passed to Illuminate\\Routing\\ResponseFactory::json() must be of the type array, 
-  /items/create:                      
+                description: "Not found"
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        errors:
+                          type: object
+                          properties:
+                            code:
+                              type: int
+                              example: 404
+                            messages:
+                              type: string
+                              example: リソースがありませんでした    
     post:
       tags:
        - "items"
       summary: "アイテム登録"
       description: "アイテムを一件登録しjson形式で登録アイテムを返す"
+      parameters:
+        - in: body
+          name: itemBody
+          description: itemBody
+          required: true
+          schema:
+            $ref: '#/definitions/Item'
       consumes:
        - "application/json"
       responses:
-        '200':
+        '201':
           description: "OK"
           content:
             application/json:
@@ -179,10 +184,24 @@ paths:
         - "items"
       summary: "アイテム更新"
       description: "アイテムを一件更新しjson形式で登録アイテムを返す"
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - in: body
+          name: itemBody
+          description: itemBody
+          required: true
+          schema:
+            $ref: '#/definitions/Item'
       consumes:
         - "application/json"
       responses:
-          '200':
+          '201':
             description: "OK"
             content:
               application/json:
@@ -293,6 +312,14 @@ paths:
         - "items"
       summary: "アイテムID検索"
       description: "アイテムをIDで一件検索しjson形式でアイテムを返す"
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          schema:
+            type: integer
+            format: int64
       consumes:
         - "application/json"
       responses:
@@ -360,12 +387,76 @@ paths:
                         messages:
                           type: string
                           example: サーバで予期しないエラーが起きました。 
+    delete:
+        tags:
+          - "items"
+        summary: アイテム削除
+        description: "アイテムを削除し、json形式でメッセージを返す"
+        parameters:
+          - name: id
+            in: path
+            description: id
+            required: true
+            schema:
+              type: integer
+              format: int64
+        consumes:
+          - "application/json"
+        responses:
+            '204':
+              description: "OK"
+              content:
+                application/json:
+                  schema:
+                    properties:
+                      messages:
+                        type: string
+                        example: 削除しました
+            '404':
+                description: "Not found"
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        errors:
+                          type: object
+                          properties:
+                            code:
+                              type: int
+                              example: 404
+                            messages:
+                              type: string
+                              example: リソースがありませんでした
+            '500':  
+                description: "Internal Server Error "
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        errors:
+                          type: object
+                          properties:
+                            code:
+                              type: int
+                              example: 500
+                            messages:
+                              type: string
+                              example: サーバで予期しないエラーが起きました。
   /items/search:
-    post:
+    get:
         tags:
           - "items"
         summary: アイテム検索
         description: "アイテムを一件更新しjson形式で登録アイテムを返す"
+        parameters:
+          - name: keyword
+            in: path
+            description: 検索ワード
+            required: true
+            schema:
+              type: string
         consumes:
           - "application/json"
         responses:
@@ -440,24 +531,6 @@ paths:
                             messages:
                               type: string
                               example: サーバで予期しないエラーが起きました。
-  /items/search/{itemId}:
-    delete:
-        tags:
-          - "items"
-        summary: アイテム削除
-        description: "アイテムを一件更新しjson形式で登録アイテムを返す"
-        consumes:
-          - "application/json"
-        responses:
-            '200':
-              description: "OK"
-              content:
-                application/json:
-                  schema:
-                    properties:
-                      messages:
-                        type: string
-                        example: 削除しました
 definitions:
   Content:
     type: object

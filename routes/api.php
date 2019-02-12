@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -16,7 +15,5 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-
-Route::resource('items', 'ItemsController');
-Route::resource('items', 'ItemsController');
-Route::post('items/search','ItemsController@search');
+Route::get('v1/items/search', 'ItemsController@search')->middleware('ajax');
+Route::resource('v1/items', 'ItemsController')->middleware('ajax');
