@@ -369,7 +369,8 @@ components:
     image:
       description: 画像
       type: string
-      example: image.jpg
+      format: byte
+      example: U3dhZ2dlciByb2Nrcw==
     created_at:
       description: 更新日時
       type: string
