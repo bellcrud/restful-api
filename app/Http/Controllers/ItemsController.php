@@ -22,11 +22,10 @@ class ItemsController extends Controller
      */
     public function index()
     {
-        $itemsCount = Item::itemCounter();
-        $items = Item::all();
-
+        $items = Item::itemAll();
+        $itemsCount = $items->count();
         //アイテムが存在していない場合メッセージを返す。
-        if($itemsCount == 0){
+        if($itemsCount === 0){
             return response()->json(["message" => "アイテムが登録されていません"]);
         }
         return response()->json(["items" => $items, "count" => $itemsCount]);
@@ -54,7 +53,7 @@ class ItemsController extends Controller
         $params = $request->all();
 
         $item = Item::storeItem($params);
-        return response()->json(["item" => $item, "message" => "登録が完了しました。"]);
+        return response()->json(["item" => $item, "message" => "登録が完了しました。"],201);
     }
 
 
@@ -67,6 +66,7 @@ class ItemsController extends Controller
     {
         //idに格納されている値がintegerか確認
         $input = ['id' => $id];
+        $rule = ['id' => 'integer'];
         $rule = ['id' => 'integer'];
         $validator = \Validator::make( $input, $rule );
         if($validator->fails()) {
@@ -113,7 +113,8 @@ class ItemsController extends Controller
 
             $params = $request->all();
             $item = Item::updateItem($params,$id);
-            return response()->json(["item" => $item]);
+            $message = '更新が完了しました。';
+            return response()->json(['item' => $item, 'message' => $message], 201);
         }else{
 
                 abort(404);
@@ -145,7 +146,7 @@ class ItemsController extends Controller
             Item::deleteItem($id);
 
             $message = '削除しました.';
-            return \response()->json(['message' => $message]);
+            return response()->json(['message' => $message], 201);
         }else{
             abort(404);
         }
@@ -165,14 +166,14 @@ class ItemsController extends Controller
 
         //キーワードがあれば検索する。なければメッセージのみを返す
         if(!is_null($keyword)){
-            $hitItemCount = Item::findByKeywordItem($keyword)->count();
+            $itemCount = Item::findByKeywordItem($keyword)->count();
 
-            $hitItem = Item::findByKeywordItem($keyword);
+            $items = Item::findByKeywordItem($keyword);
 
             //ヒットした件数が1件以上であれば、アイテム情報を返す。なければメッセージのみを返す
-            if($hitItemCount != 0){
+            if($itemCount != 0){
 
-            return response()->json(['hitItem' => $hitItem, 'hitItemCount' => $hitItemCount]);
+            return response()->json(['items' => $items, 'itemCount' => $itemCount]);
 
             }else{
 
