@@ -235,7 +235,6 @@ class ItemsController extends Controller
      */
     public function imageDelete($fileName)
     {
-        //Storage::delete($fileName);
         Storage::disk('local')->delete($fileName);
     }
 
