@@ -6,6 +6,7 @@ use App\Item;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as StatusCode;//追加
 use Illuminate\Contracts\Validation\Validator;  // 追加
+use Storage;
 class ItemsController extends Controller
 {
     public function errorValidation (Validator $validator)
@@ -52,6 +53,10 @@ class ItemsController extends Controller
 
         $params = $request->all();
 
+        //画像ファイルアップロードと返り値にファイル名取得
+        $params['image'] = self::imageUpload($params['image']);
+
+        //データ登録処理
         $item = Item::storeItem($params);
         return response()->json(["item" => $item, "message" => "登録が完了しました。"],201);
     }
@@ -112,6 +117,19 @@ class ItemsController extends Controller
             }
 
             $params = $request->all();
+            $image = array_key_exists('image', $params);
+            //imageプロパティが空でなければ、画像をストレージに保存
+
+            if($image){
+
+                //元画像削除
+                self::imageDelete($item->getAttribute('image'));
+
+                //画像登録
+                $params['image'] = self::imageUpload($params['image']);
+            }
+
+            //データ更新処理
             $item = Item::updateItem($params,$id);
             $message = '更新が完了しました。';
             return response()->json(['item' => $item, 'message' => $message], 201);
@@ -139,9 +157,11 @@ class ItemsController extends Controller
         }
 
         //対象データの存在確認
-
         $item = Item::find($id);
         if($item) {
+            //保存されている画像ファイルを削除
+            self::imageDelete($item->getAttribute('image'));
+
             //削除処理
             Item::deleteItem($id);
 
@@ -188,6 +208,35 @@ class ItemsController extends Controller
         }
 
 
+    }
+
+    /**
+     * 画像の登録
+     * 画像ファイルをアップロードし、ファイル名を返す。
+     * 保存するファイル形式は.png
+     * @param $image
+     * @return string
+     */
+    public function imageUpload($image)
+    {
+        $image = str_replace('data:image/png;base64,', '', $image);
+        $fileData = base64_decode($image);
+
+        $fileName = date("Y_m_d_H_i_s"). '_image.png';
+        file_put_contents($fileName, $fileData);
+
+        return $fileName;
+    }
+
+    /**
+     * 画像の削除
+     * 画像ファイルを削除する。
+     * @param $fileName
+     */
+    public function imageDelete($fileName)
+    {
+        //Storage::delete($fileName);
+        Storage::disk('local')->delete($fileName);
     }
 
 }
