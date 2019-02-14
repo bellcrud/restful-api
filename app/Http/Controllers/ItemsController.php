@@ -155,7 +155,12 @@ class ItemsController extends Controller
             //データ更新処理
             $item = Item::updateItem($params,$id);
             $message = '更新が完了しました。';
-            return response()->json(['item' => $item, 'message' => $message], 201);
+            return response()->json(
+                ['item' => $item, 'message' => $message],
+                201,
+                [],
+                JSON_UNESCAPED_UNICODE
+            );
         }else{
 
                 abort(404);
@@ -189,7 +194,12 @@ class ItemsController extends Controller
             Item::deleteItem($id);
 
             $message = '削除しました.';
-            return response()->json(['message' => $message], 201);
+            return response()->json(
+                ['message' => $message],
+                201,
+                [],
+                JSON_UNESCAPED_UNICODE
+            );
         }else{
             abort(404);
         }
@@ -216,18 +226,33 @@ class ItemsController extends Controller
             //ヒットした件数が1件以上であれば、アイテム情報を返す。なければメッセージのみを返す
             if($itemCount != 0){
 
-            return response()->json(['items' => $items, 'itemCount' => $itemCount]);
+                return response()->json(
+                    ['items' => $items, 'itemCount' => $itemCount],
+                    200,
+                    [],
+                    JSON_UNESCAPED_UNICODE
+                );
 
             }else{
 
                 $messages = "キーワードに当てはまるアイテムがありませんでした。";
 
-                return response()->json(['messages' => $messages]);
+                return response()->json(
+                    ['messages' => $messages],
+                    200,
+                    [],
+                    JSON_UNESCAPED_UNICODE
+                );
             }
         }else{
             $messages = "キーワードに当てはまるアイテムがありませんでした。";
 
-            return response()->json(['messages' => $messages]);
+            return response()->json(
+                ['messages' => $messages],
+                200,
+                [],
+                JSON_UNESCAPED_UNICODE
+            );
         }
 
 

@@ -106,6 +106,11 @@ class Handler extends ExceptionHandler
             'details' => $details,
         ];
 
-        return response()->json(['errors' => $errors]);
+        return response()->json(
+            ['errors' => $errors],
+            $statusCode,
+            [],
+            JSON_UNESCAPED_UNICODE
+        );
     }
 }
