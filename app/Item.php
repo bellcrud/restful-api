@@ -104,7 +104,7 @@ class Item extends Model
      */
     public static function itemAll()
     {
-        $items = self::all();;
+        $items = Item::all();;
         return $items;
     }
 
