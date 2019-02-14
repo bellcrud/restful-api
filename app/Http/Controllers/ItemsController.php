@@ -27,9 +27,21 @@ class ItemsController extends Controller
         $itemsCount = $items->count();
         //アイテムが存在していない場合メッセージを返す。
         if($itemsCount === 0){
-            return response()->json(["message" => "アイテムが登録されていません"]);
+            //return response()->json(["message" => "アイテムが登録されていません"]);
+            return response()->json(
+                ["message" => "アイテムが登録されていません"],
+                200,
+                [],
+                JSON_UNESCAPED_UNICODE
+            );
         }
-        return response()->json(["items" => $items, "count" => $itemsCount]);
+        return response()->json(
+            ["items" => $items, "count" => $itemsCount],
+            200,
+            [],
+            JSON_UNESCAPED_UNICODE
+        );
+
     }
 
 
@@ -58,7 +70,12 @@ class ItemsController extends Controller
 
         //データ登録処理
         $item = Item::storeItem($params);
-        return response()->json(["item" => $item, "message" => "登録が完了しました。"],201);
+        return response()->json(
+            ["item" => $item, "message" => "登録が完了しました。"],
+            201,
+            [],
+            JSON_UNESCAPED_UNICODE
+        );
     }
 
 
@@ -80,7 +97,13 @@ class ItemsController extends Controller
 
         $item = Item::find($id);
         if($item) {
-            return response()->json(['item' => $item]);
+            //return response()->json(['item' => $item]);
+            return response()->json(
+                ['item' => $item],
+                200,
+                [],
+                JSON_UNESCAPED_UNICODE
+            );
         }else{
             abort(404);
         }
@@ -212,20 +235,32 @@ class ItemsController extends Controller
 
     /**
      * 画像の登録
-     * 画像ファイルをアップロードし、ファイル名を返す。
+     * 画像ファイルをアップロードし、ファイルのimageディレクトリ以下のファイルパスを返す。
      * 保存するファイル形式は.png
+     * ①ストレージをpublicに設定
+     * ②confファイルから、保存先パスを取得
+     * ③ファイル名を作成
+     * ④base64をバイナリデータにエンコード
+     * ⑤ファイルをアップロードする
      * @param $image
      * @return string
      */
     public function imageUpload($image)
     {
+        //保存先の指定処理
+        $disk = Storage::disk('public');
+        $store_dir = config('filesystems.image');
+
+        //保存データの準備
+        $store_filename = date("Y_m_d_H_i_s"). '_image.png';
+        $storefile = sprintf('%s/%s',$store_dir  ,$store_filename );
         $image = str_replace('data:image/png;base64,', '', $image);
-        $fileData = base64_decode($image);
+        $contents = base64_decode($image);
 
-        $fileName = date("Y_m_d_H_i_s"). '_image.png';
-        file_put_contents($fileName, $fileData);
+        //保存データのアップロード
+        $disk->put($storefile, $contents);
 
-        return $fileName;
+        return $storefile;
     }
 
     /**
@@ -235,7 +270,7 @@ class ItemsController extends Controller
      */
     public function imageDelete($fileName)
     {
-        Storage::disk('local')->delete($fileName);
+        $disk = Storage::disk('public');
+        $disk->delete($fileName);
     }
-
 }
