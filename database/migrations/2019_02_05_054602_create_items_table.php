@@ -15,11 +15,12 @@ class CreateItemsTable extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name', 100);
-            $table->string('description', 500);
-            $table->integer('price');
-            $table->mediumText('image');
+            $table->string('name', 100)->comment('商品の名前');
+            $table->string('description', 500)->comment('商品の説明');
+            $table->integer('price')->comment('商品の価格');
+            $table->mediumText('image')->comment('商品の画像URL');
             $table->timestamps();
+            $table->index('name');
         });
     }
 
