@@ -65,4 +65,6 @@ return [
 
     ],
 
+    'image' => env('IMAGE_DIRECTORY'),
+
 ];
