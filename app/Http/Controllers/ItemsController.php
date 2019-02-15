@@ -45,25 +45,25 @@ class ItemsController extends Controller
     }
 
 
-    /**
-     * アイテム登録
-     * @param Request $request
-     * @throws \Throwable
-     */
+
     public function store(Request $request)
     {
-        $validator = \Validator::make($request->all(), [
+        $params = $request->all();
+        $params = self::imageDecode($params);
+        $validator = \Validator::make($params, [
             'name' => 'max:100|required',
             'description' => 'max:500|required',
             'price' => 'digits_between:1,11|required',
-            'image' => 'required'
+            'image' => 'required|base64',
+            'decodeImage' => 'required|base64',
         ]);
 
         if ($validator->fails()){
             $this->errorValidation($validator);
         }
 
-        $params = $request->all();
+        //$params['image']にデコードしたデータを格納、余計な要素を削除
+        $params = self::imageFinalData($params);
 
         //画像ファイルアップロードと返り値にファイル名取得
         $params['image'] = self::imageUpload($params['image']);
@@ -88,7 +88,6 @@ class ItemsController extends Controller
     {
         //idに格納されている値がintegerか確認
         $input = ['id' => $id];
-        $rule = ['id' => 'integer'];
         $rule = ['id' => 'integer'];
         $validator = \Validator::make( $input, $rule );
         if($validator->fails()) {
@@ -129,21 +128,26 @@ class ItemsController extends Controller
         //対象データがあれば更新する
         $item = Item::find($id);
         if($item){
-            $validator = \Validator::make($request->all(), [
+            $params = $request->all();
+            $params = self::imageDecode($params);
+            $validator = \Validator::make($params, [
                 'name' => 'max:100',
                 'description' => 'max:500',
                 'price' => 'digits_between:1,11',
+                'image' => 'base64',
+                'decodeImage' => 'base64',
+
             ]);
 
             if ($validator->fails()){
                 $this->errorValidation($validator);
             }
 
-            $params = $request->all();
-            $image = array_key_exists('image', $params);
             //imageプロパティが空でなければ、画像をストレージに保存
+            if(array_key_exists('image', $params)){
 
-            if($image){
+                //$params['image']にデコードしたデータを格納、余計な要素を削除
+                $params = self::imageFinalData($params);
 
                 //元画像削除
                 self::imageDelete($item->getAttribute('image'));
@@ -274,18 +278,15 @@ class ItemsController extends Controller
     {
         //保存先の指定処理
         $disk = Storage::disk('public');
-        $store_dir = config('filesystems.image');
+        $storeDir = config('filesystems.image');
 
         //保存データの準備
-        $store_filename = date("Y_m_d_H_i_s"). '_image.png';
-        $storefile = sprintf('%s/%s',$store_dir  ,$store_filename );
-        $image = str_replace('data:image/png;base64,', '', $image);
-        $contents = base64_decode($image);
+        $storeFilename = date("Y_m_d_H_i_s"). '_image.png';
+        $storeFile = sprintf('%s/%s',$storeDir  ,$storeFilename );
 
         //保存データのアップロード
-        $disk->put($storefile, $contents);
-
-        return $storefile;
+        $disk->put($storeFile, $image);
+        return $storeFile;
     }
 
     /**
@@ -297,5 +298,20 @@ class ItemsController extends Controller
     {
         $disk = Storage::disk('public');
         $disk->delete($fileName);
+    }
+
+    public function imageDecode($params)
+    {
+        $image = str_replace('data:image/png;base64,', '', $params['image']);
+        $params['decodeImage'] = base64_decode($image);
+        return $params;
+    }
+
+    public function imageFinalData($params)
+    {
+        $params['image'] = $params['decodeImage'];
+        unset($params['decodeImage']);
+
+        return $params;
     }
 }

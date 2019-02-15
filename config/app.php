@@ -178,6 +178,9 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        //大倉追加20190214
+        App\Providers\ValidatorServiceProvider::class,
+
     ],
 
     /*
