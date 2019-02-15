@@ -72,6 +72,8 @@ class ItemsController extends Controller
 
         //$params['image']にデコードしたデータを格納、余計な要素を削除
         $params = self::imageFinalData($params);
+        //画像登録
+        $params['image'] = self::imageUpload($params['image']);
 
         $item = Item::storeItem($params);
         return response()->json(
