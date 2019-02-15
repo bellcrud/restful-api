@@ -6,6 +6,7 @@ use App\Item;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as StatusCode;//追加
 use Illuminate\Contracts\Validation\Validator;  // 追加
+use Storage;
 class ItemsController extends Controller
 {
     /**
@@ -162,7 +163,6 @@ class ItemsController extends Controller
             }
 
             //データ更新処理
-            $params = $request->all();
             $item = Item::updateItem($params,$id);
             $message = '更新が完了しました。';
             return response()->json(
@@ -198,6 +198,7 @@ class ItemsController extends Controller
 
         $item = Item::find($id);
         if($item) {
+            self::imageDelete($item->getAttribute('image'));
             //削除処理
             Item::deleteItem($id);
 
