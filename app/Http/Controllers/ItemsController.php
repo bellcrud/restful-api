@@ -6,7 +6,6 @@ use App\Item;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as StatusCode;//追加
 use Illuminate\Contracts\Validation\Validator;  // 追加
-use Storage;
 class ItemsController extends Controller
 {
     /**
@@ -30,7 +29,6 @@ class ItemsController extends Controller
         $itemsCount = $items->count();
         //アイテムが存在していない場合メッセージを返す。
         if($itemsCount === 0){
-            //return response()->json(["message" => "アイテムが登録されていません"]);
             return response()->json(
                 ["message" => "アイテムが登録されていません"],
                 200,
@@ -74,10 +72,6 @@ class ItemsController extends Controller
         //$params['image']にデコードしたデータを格納、余計な要素を削除
         $params = self::imageFinalData($params);
 
-        //画像ファイルアップロードと返り値にファイル名取得
-        $params['image'] = self::imageUpload($params['image']);
-
-        //データ登録処理
         $item = Item::storeItem($params);
         return response()->json(
             ["item" => $item, "message" => "登録が完了しました。"],
@@ -153,6 +147,7 @@ class ItemsController extends Controller
                 $this->errorValidation($validator);
             }
 
+
             //imageプロパティが空でなければ、画像をストレージに保存
             if(array_key_exists('image', $params)){
 
@@ -167,6 +162,7 @@ class ItemsController extends Controller
             }
 
             //データ更新処理
+            $params = $request->all();
             $item = Item::updateItem($params,$id);
             $message = '更新が完了しました。';
             return response()->json(
@@ -199,11 +195,9 @@ class ItemsController extends Controller
         }
 
         //対象データの存在確認
+
         $item = Item::find($id);
         if($item) {
-            //保存されている画像ファイルを削除
-            self::imageDelete($item->getAttribute('image'));
-
             //削除処理
             Item::deleteItem($id);
 
