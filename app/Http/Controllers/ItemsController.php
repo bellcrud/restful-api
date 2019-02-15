@@ -9,6 +9,9 @@ use Illuminate\Contracts\Validation\Validator;  // 追加
 use Storage;
 class ItemsController extends Controller
 {
+    /**
+     * @param Validator $validator
+     */
     public function errorValidation (Validator $validator)
     {
         $response['errors']  = $validator->errors()->toArray();
@@ -45,7 +48,13 @@ class ItemsController extends Controller
     }
 
 
-
+    /**
+     * アイテム登録
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Throwable
+     */
     public function store(Request $request)
     {
         $params = $request->all();
@@ -113,6 +122,7 @@ class ItemsController extends Controller
      * アイテム更新
      * @param Request $request
      * @param $id
+     * @return \Illuminate\Http\JsonResponse
      * @throws \Throwable
      */
     public function update(Request $request, $id)
@@ -291,7 +301,7 @@ class ItemsController extends Controller
 
     /**
      * 画像の削除
-     * 画像ファイルを削除する。
+     * 引数ファイル名を元に画像を削除する
      * @param $fileName
      */
     public function imageDelete($fileName)
@@ -300,6 +310,12 @@ class ItemsController extends Controller
         $disk->delete($fileName);
     }
 
+    /**
+     * 画像Base64をエンコードする
+     * エンコードしたデータは配列型$paramsに要素を追加する
+     * @param $params
+     * @return mixed
+     */
     public function imageDecode($params)
     {
         $image = str_replace('data:image/png;base64,', '', $params['image']);
@@ -307,6 +323,14 @@ class ItemsController extends Controller
         return $params;
     }
 
+    /**
+     * 画像登録用データ確定
+     * 配列型$paramsの要素を変更する
+     * $params['image']にデコードしたデータを格納
+     * 不要になった配列要素を削除
+     * @param $params
+     * @return mixed
+     */
     public function imageFinalData($params)
     {
         $params['image'] = $params['decodeImage'];
