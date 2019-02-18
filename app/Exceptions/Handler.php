@@ -49,63 +49,71 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if($this->isHttpException($exception)) {
 
-        //HTTPステータスコード取得
-        $statusCode = $exception->getStatusCode();
+            //HTTPステータスコード取得
+            $statusCode = $exception->getStatusCode();
 
-        //エラーメッセージ取得
-        $details = $exception->getMessage();
+            //エラーメッセージ取得
+            $details = $exception->getMessage();
 
-        //400エラー
-        if ($statusCode == StatusCode::HTTP_BAD_REQUEST) {
+            //400エラー
+            if ($statusCode == StatusCode::HTTP_BAD_REQUEST) {
 
-            $statusMessage = "Bad Request";
+                $statusMessage = "Bad Request";
+            } //401エラー
+            elseif ($statusCode == StatusCode::HTTP_UNAUTHORIZED) {
+
+                $statusMessage = "Unauthorized";
+            } //404エラー
+            elseif ($statusCode == StatusCode::HTTP_NOT_FOUND) {
+
+                $statusMessage = "リソースがありませんでした";
+            } //405エラー
+            elseif ($statusCode == StatusCode::HTTP_METHOD_NOT_ALLOWED) {
+
+                $statusMessage = "Method Not Allowed";
+            } //422エラー
+            elseif ($statusCode == StatusCode::HTTP_UNPROCESSABLE_ENTITY) {
+
+                $statusMessage = "バリデーション エラーです";
+                $details = $exception->getHeaders();
+            } //500エラー
+            elseif ($statusCode == StatusCode::HTTP_INTERNAL_SERVER_ERROR) {
+
+                $statusMessage = "サーバで予期しないエラーが発生しました";
+            } //503エラー
+            elseif ($statusCode == StatusCode::HTTP_SERVICE_UNAVAILABLE) {
+
+                $statusMessage = "Service Unavailable";
+            } //その他500エラー
+            else {
+
+                $statusCode = StatusCode::HTTP_INTERNAL_SERVER_ERROR;
+                $statusMessage = "There Is Something Error";
+
+            };
+
+            $errors = [
+                'code' => $statusCode,
+                'message' => $statusMessage,
+                'details' => $details,
+            ];
+
+            return response()->json(
+                ['errors' => $errors],
+                $statusCode,
+                [],
+                JSON_UNESCAPED_UNICODE
+            );
         }
-        //401エラー
-        elseif ($statusCode == StatusCode::HTTP_UNAUTHORIZED) {
-
-            $statusMessage = "Unauthorized";
-        }
-        //404エラー
-        elseif ($statusCode == StatusCode::HTTP_NOT_FOUND) {
-
-            $statusMessage = "リソースがありませんでした";
-        }
-        //405エラー
-        elseif ($statusCode == StatusCode::HTTP_METHOD_NOT_ALLOWED) {
-
-            $statusMessage = "Method Not Allowed";
-        }
-        //422エラー
-        elseif ($statusCode == StatusCode::HTTP_UNPROCESSABLE_ENTITY) {
-
-            $statusMessage = "バリデーション エラーです";
-            $details = $exception->getHeaders();
-        }
-        //500エラー
-        elseif ($statusCode == StatusCode::HTTP_INTERNAL_SERVER_ERROR) {
-
-            $statusMessage = "サーバで予期しないエラーが発生しました";
-        }
-        //503エラー
-        elseif ($statusCode == StatusCode::HTTP_SERVICE_UNAVAILABLE) {
-
-            $statusMessage = "Service Unavailable";
-        }
-        //その他500エラー
-        else {
-
-            $statusCode = StatusCode::HTTP_INTERNAL_SERVER_ERROR;
-            $statusMessage = "There Is Something Error";
-
-        };
-
+        //HTTP通信以外の例外が起こった場合500エラーで返す。
+        $statusCode = StatusCode::HTTP_INTERNAL_SERVER_ERROR;
+        $statusMessage = "There Is Something Error";
         $errors = [
             'code' => $statusCode,
             'message' => $statusMessage,
-            'details' => $details,
         ];
-
         return response()->json(
             ['errors' => $errors],
             $statusCode,
