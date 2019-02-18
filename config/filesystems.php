@@ -65,6 +65,7 @@ return [
 
     ],
 
+    'image' => 'image',
 
     'fileMaxSize' => '15000000',
 

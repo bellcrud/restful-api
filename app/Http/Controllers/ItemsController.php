@@ -282,7 +282,7 @@ class ItemsController extends Controller
          */
         //保存先の指定処理
         $disk = Storage::disk('public');
-        //$storeDir = config('filesystems.image');
+        $storeDir = config('filesystems.image');
 
         // 保存ファイル用変数を初期化
         $storeFile = null;
@@ -290,23 +290,23 @@ class ItemsController extends Controller
         $mime_type = finfo_buffer(finfo_open(), $image, FILEINFO_MIME_TYPE);
 
         // ファイルのMIMEタイプがimage/pngファイルであれば拡張子「.png」で保存する
-        if (!strcmp($mime_type, 'image/png') == 0) {
+        if (strcmp($mime_type, 'image/png') == 0) {
             //保存データの準備
             $storeFilename = rand(). '_image.png';
-            $storeFile = sprintf('%s/%s', $storeFilename);
+            $storeFile = sprintf('%s/%s', $storeDir, $storeFilename);
         }
         // ファイルのMIMEタイプがimage/jpeg「.jpeg」で保存する
-        if (!strcmp($mime_type, 'image/jpeg') == 0) {
+        if (strcmp($mime_type, 'image/jpeg') == 0) {
             //保存データの準備
-            $storeFilename = date("Y_m_d_H_i_s") . '_image.jpeg';
-            $storeFile = sprintf('%s/%s', $storeFilename);
+            $storeFilename = rand(). '_image.jpeg';
+            $storeFile = sprintf('%s/%s', $storeDir, $storeFilename);
         }
 
         //保存データのアップロード
         $disk->put($storeFile, $image);
 
         //ブラウザで確認する用のURLに変更
-        $storeFile = '/storage/'. $image;
+        $storeFile = '/storage/'. $storeFile;
         return $storeFile;
     }
 
@@ -318,6 +318,9 @@ class ItemsController extends Controller
     public function imageDelete($fileName)
     {
         $disk = Storage::disk('public');
+
+        //ファイルパスを修正
+        $fileName = str_replace('/storage/','',$fileName);
         $disk->delete($fileName);
     }
 
