@@ -35,14 +35,14 @@ class ItemsController extends Controller
         if($itemsCount === 0){
             return response()->json(
                 ["message" => "アイテムが登録されていません"],
-                200,
+                StatusCode::HTTP_OK,
                 [],
                 JSON_UNESCAPED_UNICODE
             );
         }
         return response()->json(
             ["items" => $items, "count" => $itemsCount],
-            200,
+            StatusCode::HTTP_OK,
             [],
             JSON_UNESCAPED_UNICODE
         );
@@ -78,7 +78,7 @@ class ItemsController extends Controller
         $item = Item::storeItem($params);
         return response()->json(
             ["item" => $item, "message" => "登録が完了しました。"],
-            201,
+            StatusCode::HTTP_CREATED,
             [],
             JSON_UNESCAPED_UNICODE
         );
@@ -97,7 +97,7 @@ class ItemsController extends Controller
         $rule = ['id' => 'integer'];
         $validator = \Validator::make( $input, $rule );
         if($validator->fails()) {
-            abort(404);
+            abort(StatusCode::HTTP_NOT_FOUND);
         }
 
         $item = Item::find($id);
@@ -105,12 +105,12 @@ class ItemsController extends Controller
             //return response()->json(['item' => $item]);
             return response()->json(
                 ['item' => $item],
-                200,
+                StatusCode::HTTP_OK,
                 [],
                 JSON_UNESCAPED_UNICODE
             );
         }else{
-            abort(404);
+            abort(StatusCode::HTTP_NOT_FOUND);
         }
     }
 
@@ -129,7 +129,7 @@ class ItemsController extends Controller
         $rule = ['id' => 'integer'];
         $validator = \Validator::make( $input, $rule );
         if($validator->fails()) {
-            abort(421);
+            abort(StatusCode::HTTP_MISDIRECTED_REQUEST);
         }
 
         //対象データがあれば更新する
@@ -164,13 +164,13 @@ class ItemsController extends Controller
             $message = '更新が完了しました。';
             return response()->json(
                 ['item' => $item, 'message' => $message],
-                201,
+                StatusCode::HTTP_CREATED,
                 [],
                 JSON_UNESCAPED_UNICODE
             );
         }else{
 
-                abort(404);
+                abort(StatusCode::HTTP_NOT_FOUND);
         }
     }
 
@@ -188,7 +188,7 @@ class ItemsController extends Controller
         $rule = ['id' => 'integer'];
         $validator = \Validator::make( $input, $rule );
         if($validator->fails()) {
-            abort(421);
+            abort(StatusCode::HTTP_MISDIRECTED_REQUEST);
         }
 
         //対象データの存在確認
@@ -202,12 +202,12 @@ class ItemsController extends Controller
             $message = '削除しました.';
             return response()->json(
                 ['message' => $message],
-                201,
+                StatusCode::HTTP_CREATED,
                 [],
                 JSON_UNESCAPED_UNICODE
             );
         }else{
-            abort(404);
+            abort(StatusCode::HTTP_NOT_FOUND);
         }
 
     }
@@ -225,16 +225,15 @@ class ItemsController extends Controller
 
         //キーワードがあれば検索する。なければメッセージのみを返す
         if(!is_null($keyword)){
-            $itemCount = Item::findByKeywordItem($keyword)->count();
 
             $items = Item::findByKeywordItem($keyword);
-
+            $itemCount = count($items);
             //ヒットした件数が1件以上であれば、アイテム情報を返す。なければメッセージのみを返す
-            if($itemCount != 0){
+            if(count($items) != 0){
 
                 return response()->json(
                     ['items' => $items, 'itemCount' => $itemCount],
-                    200,
+                    StatusCode::HTTP_OK,
                     [],
                     JSON_UNESCAPED_UNICODE
                 );
@@ -245,7 +244,7 @@ class ItemsController extends Controller
 
                 return response()->json(
                     ['messages' => $messages],
-                    200,
+                    StatusCode::HTTP_OK,
                     [],
                     JSON_UNESCAPED_UNICODE
                 );
@@ -255,7 +254,7 @@ class ItemsController extends Controller
 
             return response()->json(
                 ['messages' => $messages],
-                200,
+                StatusCode::HTTP_OK,
                 [],
                 JSON_UNESCAPED_UNICODE
             );
@@ -283,7 +282,7 @@ class ItemsController extends Controller
          */
         //保存先の指定処理
         $disk = Storage::disk('public');
-        $storeDir = config('filesystems.image');
+        //$storeDir = config('filesystems.image');
 
         // 保存ファイル用変数を初期化
         $storeFile = null;
@@ -293,18 +292,21 @@ class ItemsController extends Controller
         // ファイルのMIMEタイプがimage/pngファイルであれば拡張子「.png」で保存する
         if (!strcmp($mime_type, 'image/png') == 0) {
             //保存データの準備
-            $storeFilename = date("Y_m_d_H_i_s") . '_image.png';
-            $storeFile = sprintf('%s/%s', $storeDir, $storeFilename);
+            $storeFilename = rand(). '_image.png';
+            $storeFile = sprintf('%s/%s', $storeFilename);
         }
         // ファイルのMIMEタイプがimage/jpeg「.jpeg」で保存する
         if (!strcmp($mime_type, 'image/jpeg') == 0) {
             //保存データの準備
             $storeFilename = date("Y_m_d_H_i_s") . '_image.jpeg';
-            $storeFile = sprintf('%s/%s', $storeDir, $storeFilename);
+            $storeFile = sprintf('%s/%s', $storeFilename);
         }
 
         //保存データのアップロード
         $disk->put($storeFile, $image);
+
+        //ブラウザで確認する用のURLに変更
+        $storeFile = '/storage/'. $image;
         return $storeFile;
     }
 

@@ -5,7 +5,6 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 
-
 class Item extends Model
 {
     protected $fillable = [
@@ -21,15 +20,10 @@ class Item extends Model
      */
     public static function storeItem($params)
     {
-        //登録したアイテムを返すためインスタンスをtry前に生成
         $item = new Item();
-        try {
-            \DB::Transaction(function () use ($params, $item) {
-                $item->fill($params)->save();
-            });
-        }catch(QueryException $exception){
-            throw $exception;
-        }
+        \DB::Transaction(function () use ($params, $item) {
+            $item->fill($params)->save();
+        });
 
         return $item;
     }
@@ -44,14 +38,9 @@ class Item extends Model
     public static function updateItem($params, $id)
     {
         $item = Item::find($id);
-        //DBファザードのtransactionメソッドのためロールバック・コミットは記述なし
-        try {
-            \DB::Transaction(function () use ($params,$id,$item) {
-                $item->update($params);
-            });
-        }catch(QueryException $exception){
-            throw $exception;
-        }
+        \DB::Transaction(function () use ($params,$id,$item) {
+            $item->update($params);
+        });
         //変更後再度アイテム取得
         //$item = Item::find($id);
         return $item;
@@ -66,14 +55,10 @@ class Item extends Model
     public static function deleteItem($id)
     {
         //DBファザードのtransactionメソッドのためロールバック・コミットは記述なし
-        try {
-            \DB::Transaction(function () use ($id) {
-                $item = Item::find($id);
-                $item->delete();
-            });
-        }catch(QueryException $exception){
-            throw $exception;
-        }
+        \DB::Transaction(function () use ($id) {
+            $item = Item::find($id);
+            $item->delete();
+        });
     }
 
     /**
