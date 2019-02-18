@@ -67,4 +67,7 @@ return [
 
     'image' => env('IMAGE_DIRECTORY'),
 
+    'fileMaxSize' => '15000000',
+
+
 ];

@@ -6,7 +6,10 @@ use App\Item;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response as StatusCode;//追加
 use Illuminate\Contracts\Validation\Validator;  // 追加
-use Storage;
+use Storage; //追加
+
+use Illuminate\Support\Facades\Log;//追加 エラー時ログ出力
+
 class ItemsController extends Controller
 {
     /**
@@ -57,21 +60,18 @@ class ItemsController extends Controller
     public function store(Request $request)
     {
         $params = $request->all();
-        $params = self::imageDecode($params);
+        $params = $this->imageDecode($params);
         $validator = \Validator::make($params, [
             'name' => 'max:100|required',
             'description' => 'max:500|required',
             'price' => 'digits_between:1,11|required',
             'image' => 'required|base64',
-            'decodeImage' => 'required|base64',
         ]);
 
         if ($validator->fails()){
             $this->errorValidation($validator);
         }
 
-        //$params['image']にデコードしたデータを格納、余計な要素を削除
-        $params = self::imageFinalData($params);
         //画像登録
         $params['image'] = self::imageUpload($params['image']);
 
@@ -142,8 +142,6 @@ class ItemsController extends Controller
                 'description' => 'max:500',
                 'price' => 'digits_between:1,11',
                 'image' => 'base64',
-                'decodeImage' => 'base64',
-
             ]);
 
             if ($validator->fails()){
@@ -153,9 +151,6 @@ class ItemsController extends Controller
 
             //imageプロパティが空でなければ、画像をストレージに保存
             if(array_key_exists('image', $params)){
-
-                //$params['image']にデコードしたデータを格納、余計な要素を削除
-                $params = self::imageFinalData($params);
 
                 //元画像削除
                 self::imageDelete($item->getAttribute('image'));
@@ -283,13 +278,30 @@ class ItemsController extends Controller
      */
     public function imageUpload($image)
     {
+        /**
+         * ファイルの保存の準備
+         */
         //保存先の指定処理
         $disk = Storage::disk('public');
         $storeDir = config('filesystems.image');
 
-        //保存データの準備
-        $storeFilename = date("Y_m_d_H_i_s"). '_image.png';
-        $storeFile = sprintf('%s/%s',$storeDir  ,$storeFilename );
+        // 保存ファイル用変数を初期化
+        $storeFile = null;
+        // MIMETYPEを取得
+        $mime_type = finfo_buffer(finfo_open(), $image, FILEINFO_MIME_TYPE);
+
+        // ファイルのMIMEタイプがimage/pngファイルであれば拡張子「.png」で保存する
+        if (!strcmp($mime_type, 'image/png') == 0) {
+            //保存データの準備
+            $storeFilename = date("Y_m_d_H_i_s") . '_image.png';
+            $storeFile = sprintf('%s/%s', $storeDir, $storeFilename);
+        }
+        // ファイルのMIMEタイプがimage/jpeg「.jpeg」で保存する
+        if (!strcmp($mime_type, 'image/jpeg') == 0) {
+            //保存データの準備
+            $storeFilename = date("Y_m_d_H_i_s") . '_image.jpeg';
+            $storeFile = sprintf('%s/%s', $storeDir, $storeFilename);
+        }
 
         //保存データのアップロード
         $disk->put($storeFile, $image);
@@ -310,14 +322,52 @@ class ItemsController extends Controller
     /**
      * 画像Base64をエンコードする
      * エンコードしたデータは配列型$paramsに要素を追加する
+     * エンコード前チェック項目
+     * ①jsonで送信されえきたデータが、pngまたはjpeg
+     * ②エンコードが成功したかどうか
      * @param $params
      * @return mixed
      */
     public function imageDecode($params)
     {
-        $image = str_replace('data:image/png;base64,', '', $params['image']);
-        $params['decodeImage'] = base64_decode($image);
-        return $params;
+        // 1. imageが存在しているか
+        if(empty($params['image'])) {
+            return $params;
+        }
+
+        // 2. data:image/png;base64　または　data:image/png;base64が文字列に存在しているか & ログ
+        if(preg_match('/data:image\/png;base64/', $params['image'])) {
+            // 3. base_64のデコード
+            $base64_encode_image = str_replace('data:image/png;base64,', '', $params['image']);
+            $base64_decode_image = base64_decode($base64_encode_image);
+
+            // 4. base_64のデコードは成功したか & ログ
+            if(!$base64_decode_image) {
+                Log::info('data:image\/png;base64のエンコードに失敗しました。');
+                return $params;
+            }
+
+            $params['image'] = $base64_decode_image;
+            return $params;
+        // 2. data:image/jpeg;base64　または　data:image/jpg;base64が文字列に存在しているか & ログ
+        }elseif(preg_match('/data:image\/jpeg;base64/', $params['image'])){
+            // 3. base_64のデコード
+            $base64_encode_image = str_replace('data:image/jpeg;base64,', '', $params['image']);
+            $base64_decode_image = base64_decode($base64_encode_image);
+
+            // 4. base_64のデコードは成功したか & ログ
+            if(!$base64_decode_image) {
+                Log::info('data:image\/png;base64のエンコードに失敗しました。');
+                return $params;
+            }
+
+            $params['image'] = $base64_decode_image;
+            return $params;
+
+        }else{
+            Log::info('正しいデータではありませんでした。');
+            return $params;
+        }
     }
 
     /**
