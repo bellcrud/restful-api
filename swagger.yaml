@@ -1,0 +1,432 @@
+openapi: 3.0.0
+info:
+  title: RESTfulなAPI
+  description: 商品のデータの登録・検索・変更・削除を行うRESTfulAPIアプリケーション
+  version: 1.0.0
+paths:
+  /api/v1/itmes:
+    get:
+      tags:
+        - items
+      summary: アイテム全件取得
+      description: アイテムの全データを取得しjson形式で返す
+      responses:
+        200:
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/returnItems'
+        404:
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+    post:
+      tags:
+        - items
+      summary: アイテム登録
+      description: アイテムを一件登録しjson形式で登録アイテムを返す
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestBody'
+      responses:
+        201:
+          description: 201 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/returnItem'
+
+        422:
+          description: バリデーション エラー
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        500:
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+
+  /api/v1/items/{id}:
+    get:
+      tags:
+        - items
+      summary: アイテムID検索
+      description: アイテムをIDで一件検索しjson形式でアイテムを返す
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: アイテムID
+      responses:
+        200:
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/returnItem'
+        404:
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notExistId'
+        500:
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    put:
+      tags:
+        - items
+      summary: アイテム更新
+      description: アイテムをIDで一件検索しjson形式でアイテムを返す
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestBody'
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: ID
+      responses:
+        201:
+          description: 201 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/returnItem'
+        404:
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notExistId'
+        500:
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    delete:
+      tags:
+        - items
+      summary: アイテム削除
+      description: 指定されたIDと一致する商品を削除します。
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: 商品ID
+      responses:
+        201:
+          description: 201 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/returnDelete'
+        404:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        500:
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+
+  /api/v1/items/search:
+    get:
+      tags:
+        - items
+      summary: アイテム検索
+      parameters:
+        - in: query
+          name: keyword
+          description: キーワード
+          required: false
+          schema:
+            type: string
+      description: アイテムを一件更新しjson形式で登録アイテムを返す
+      responses:
+        200:
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/returnItems'
+        200(アイテム無):
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/returnItemNothing'
+        404:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+        500:
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+components:
+  schemas:
+    # responses
+    ## 200
+    ReturnId:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 5
+    returnItems:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                $ref: '#/components/schemas/name'
+              description:
+                $ref: '#/components/schemas/description'
+              price:
+                $ref: '#/components/schemas/price'
+              image:
+                $ref: '#/components/schemas/image'
+              created_at:
+                $ref: '#/components/schemas/created_at'
+              updated_at:
+                $ref: '#/components/schemas/updated_at'
+        count:
+          $ref: '#/components/schemas/count'
+    returnItem:
+      type: object
+      properties:
+        item:
+          type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+            description:
+              $ref: '#/components/schemas/description'
+            price:
+              $ref: '#/components/schemas/price'
+            image:
+              $ref: '#/components/schemas/image'
+            created_at:
+              $ref: '#/components/schemas/created_at'
+            updated_at:
+              $ref: '#/components/schemas/updated_at'
+        messeage:
+          type: string
+          example: "登録が完了しました。"
+    returnItemSearchById:
+      type: object
+      properties:
+        item:
+          type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+            description:
+              $ref: '#/components/schemas/description'
+            price:
+              $ref: '#/components/schemas/price'
+            image:
+              $ref: '#/components/schemas/image'
+            created_at:
+              $ref: '#/components/schemas/created_at'
+            updated_at:
+              $ref: '#/components/schemas/updated_at'
+    returnItemNothing:
+      type: object
+      properties:
+        masseage:
+          type: string
+          example: "キーワードに当てはまるアイテムがありませんでした。"
+    returnDelete:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 削除しました。
+    ## 404
+    NotFoundError:
+      type: object
+      properties:
+        errors:
+          type: object
+          properties:
+            code:
+              type: string
+              example: 404
+            message:
+              type: string
+              example: "リソースがありませんでした"
+            details:
+              type: string
+              example: ""
+    ## 422
+    ValidationError:
+      type: object
+      properties:
+        errors:
+          type: object
+          properties:
+            code:
+              type: string
+              example: validation_error
+            message:
+              type: string
+              example: "バリデーションエラーです"
+            details:
+              type: object
+              properties:
+                name:
+                  type: array
+                  items:
+                    type: string
+                    example: "The name field is required."
+    notExistId:
+      type: object
+      properties:
+        errors:
+          type: object
+          properties:
+            error_code:
+              type: string
+              example: validation_error
+            status_message:
+              type: string
+              example: "The given data was invalid."
+            error_messages:
+              type: object
+              properties:
+                title:
+                  type: array
+                  items:
+                    type: string
+                    example: "The selected id is invalid."
+
+    ## 500
+    InternalServerError:
+      type: object
+      properties:
+        errors:
+          type: object
+          properties:
+            code:
+              type: string
+              example: 500
+            message:
+              type: string
+              example: "サーバーで予期しないエラーが起きました。"
+
+    # request
+    RequestBody:
+      type: object
+      required:
+        - name
+        - description
+        - price
+        - image
+      properties:
+        name:
+          $ref: '#/components/schemas/name'
+        description:
+          $ref: '#/components/schemas/description'
+        price:
+          $ref: '#/components/schemas/price'
+        image:
+          $ref: '#/components/schemas/image'
+
+    ## parameters
+    id:
+      description: ID
+      type: integer
+      format: int
+      example: 1
+    name:
+      description: 商品名
+      type: string
+      maxLength: 100
+      example: iphone
+    description:
+      description: 商品説明
+      type: string
+      maxLength: 500
+      example: スマートフォン
+    price:
+      description: 価格
+      type: integer
+      format: int
+      minimum: 0
+      exclusiveMinimum: true
+      maximum: 999999999
+      exclusiveMaximum: false
+      example: 10000
+    image:
+      description: 画像(ファイル形式はjpeg か png)
+      type: string
+      format: byte
+      example: "/storage/image/5c6b78b5e01f5_image.png"
+    created_at:
+      description: 作成日時
+      type: string
+      example: "2019-02-14 06:23:37"
+    updated_at:
+      description: 更新日時
+      type: string
+      format: date-time
+      example: "2019-02-14 06:23:37"
+    ##合計値
+    count:
+      description: 合計
+      type: integer
+      example: 1
