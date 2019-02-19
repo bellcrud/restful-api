@@ -338,7 +338,7 @@ class ItemsController extends Controller
 
             // 4. base_64のデコードは成功したか & ログ
             if (!$base64_decode_image) {
-                Log::info('data:image\/png;base64のエンコードに失敗しました。');
+                Log::info('data:image\/png;base64のデコードに失敗しました。');
                 return $params;
             }
 
@@ -352,7 +352,7 @@ class ItemsController extends Controller
 
             // 4. base_64のデコードは成功したか & ログ
             if (!$base64_decode_image) {
-                Log::info('data:image\/png;base64のエンコードに失敗しました。');
+                Log::info('data:image\/jpeg;base64のデコードに失敗しました。');
                 return $params;
             }
 

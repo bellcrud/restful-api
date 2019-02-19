@@ -41,8 +41,7 @@ class Item extends Model
         \DB::Transaction(function () use ($params,$id,$item) {
             $item->update($params);
         });
-        //変更後再度アイテム取得
-        //$item = Item::find($id);
+
         return $item;
     }
 

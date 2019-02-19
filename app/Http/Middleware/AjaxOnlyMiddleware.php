@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Middleware;
+use Symfony\Component\HttpFoundation\Response as StatusCode;//追加
 
 use Closure;
 
@@ -17,7 +18,7 @@ class AjaxOnlyMiddleware
     {
         //リクエストがajaxではない場合の処理
         if(!$request->ajax()) {
-            abort(404);
+            abort(StatusCode::HTTP_BAD_REQUEST);
         }
         return $next($request);
     }
