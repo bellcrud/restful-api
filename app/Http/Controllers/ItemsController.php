@@ -15,11 +15,11 @@ class ItemsController extends Controller
     /**
      * @param Validator $validator
      */
-    public function errorValidation (Validator $validator)
+    public function errorValidation(Validator $validator)
     {
-        $response['errors']  = $validator->errors()->toArray();
+        $response['errors'] = $validator->errors()->toArray();
 
-        abort_if($validator->fails(), StatusCode::HTTP_UNPROCESSABLE_ENTITY, $validator->errors(),$response['errors'] );
+        abort_if($validator->fails(), StatusCode::HTTP_UNPROCESSABLE_ENTITY, $validator->errors(), $response['errors']);
 
     }
 
@@ -32,7 +32,7 @@ class ItemsController extends Controller
         $items = Item::itemAll();
         $itemsCount = $items->count();
         //アイテムが存在していない場合メッセージを返す。
-        if($itemsCount === 0){
+        if ($itemsCount === 0) {
             return response()->json(
                 ["message" => "アイテムが登録されていません"],
                 StatusCode::HTTP_OK,
@@ -64,11 +64,11 @@ class ItemsController extends Controller
         $validator = \Validator::make($params, [
             'name' => 'max:100|required',
             'description' => 'max:500|required',
-            'price' => 'digits_between:1,11|required',
+            'price' => 'digits_between:1,9|required',
             'image' => 'required|base64',
         ]);
 
-        if ($validator->fails()){
+        if ($validator->fails()) {
             $this->errorValidation($validator);
         }
 
@@ -95,13 +95,13 @@ class ItemsController extends Controller
         //idに格納されている値がintegerか確認
         $input = ['id' => $id];
         $rule = ['id' => 'integer'];
-        $validator = \Validator::make( $input, $rule );
-        if($validator->fails()) {
+        $validator = \Validator::make($input, $rule);
+        if ($validator->fails()) {
             abort(StatusCode::HTTP_NOT_FOUND);
         }
 
         $item = Item::find($id);
-        if($item) {
+        if ($item) {
             //return response()->json(['item' => $item]);
             return response()->json(
                 ['item' => $item],
@@ -109,7 +109,7 @@ class ItemsController extends Controller
                 [],
                 JSON_UNESCAPED_UNICODE
             );
-        }else{
+        } else {
             abort(StatusCode::HTTP_NOT_FOUND);
         }
     }
@@ -127,30 +127,30 @@ class ItemsController extends Controller
         //idのバリデーションチェック
         $input = ['id' => $id];
         $rule = ['id' => 'integer'];
-        $validator = \Validator::make( $input, $rule );
-        if($validator->fails()) {
+        $validator = \Validator::make($input, $rule);
+        if ($validator->fails()) {
             abort(StatusCode::HTTP_MISDIRECTED_REQUEST);
         }
 
         //対象データがあれば更新する
         $item = Item::find($id);
-        if($item){
+        if ($item) {
             $params = $request->all();
             $params = self::imageDecode($params);
             $validator = \Validator::make($params, [
                 'name' => 'max:100',
                 'description' => 'max:500',
-                'price' => 'digits_between:1,11',
+                'price' => 'digits_between:1,9',
                 'image' => 'base64',
             ]);
 
-            if ($validator->fails()){
+            if ($validator->fails()) {
                 $this->errorValidation($validator);
             }
 
 
             //imageプロパティが空でなければ、画像をストレージに保存
-            if(array_key_exists('image', $params)){
+            if (array_key_exists('image', $params)) {
 
                 //元画像削除
                 self::imageDelete($item->getAttribute('image'));
@@ -160,7 +160,7 @@ class ItemsController extends Controller
             }
 
             //データ更新処理
-            $item = Item::updateItem($params,$id);
+            $item = Item::updateItem($params, $id);
             $message = '更新が完了しました。';
             return response()->json(
                 ['item' => $item, 'message' => $message],
@@ -168,9 +168,9 @@ class ItemsController extends Controller
                 [],
                 JSON_UNESCAPED_UNICODE
             );
-        }else{
+        } else {
 
-                abort(StatusCode::HTTP_NOT_FOUND);
+            abort(StatusCode::HTTP_NOT_FOUND);
         }
     }
 
@@ -186,27 +186,27 @@ class ItemsController extends Controller
         //idのバリデーション チェック
         $input = ['id' => $id];
         $rule = ['id' => 'integer'];
-        $validator = \Validator::make( $input, $rule );
-        if($validator->fails()) {
+        $validator = \Validator::make($input, $rule);
+        if ($validator->fails()) {
             abort(StatusCode::HTTP_MISDIRECTED_REQUEST);
         }
 
         //対象データの存在確認
 
         $item = Item::find($id);
-        if($item) {
+        if ($item) {
             self::imageDelete($item->getAttribute('image'));
             //削除処理
             Item::deleteItem($id);
 
-            $message = '削除しました.';
+            $message = '削除しました。';
             return response()->json(
                 ['message' => $message],
                 StatusCode::HTTP_CREATED,
                 [],
                 JSON_UNESCAPED_UNICODE
             );
-        }else{
+        } else {
             abort(StatusCode::HTTP_NOT_FOUND);
         }
 
@@ -220,16 +220,15 @@ class ItemsController extends Controller
      */
     public function search(Request $request)
     {
-        $params = $request->all();
-        $keyword = $params['keyword'];
+        $keyword = $request->query('keyword');
 
         //キーワードがあれば検索する。なければメッセージのみを返す
-        if(!is_null($keyword)){
+        if (!is_null($keyword)) {
 
             $items = Item::findByKeywordItem($keyword);
-            $itemCount = count($items);
+            $itemCount = $items->count();
             //ヒットした件数が1件以上であれば、アイテム情報を返す。なければメッセージのみを返す
-            if(count($items) != 0){
+            if ($itemCount !== 0) {
 
                 return response()->json(
                     ['items' => $items, 'itemCount' => $itemCount],
@@ -238,7 +237,7 @@ class ItemsController extends Controller
                     JSON_UNESCAPED_UNICODE
                 );
 
-            }else{
+            } else {
 
                 $messages = "キーワードに当てはまるアイテムがありませんでした。";
 
@@ -249,7 +248,7 @@ class ItemsController extends Controller
                     JSON_UNESCAPED_UNICODE
                 );
             }
-        }else{
+        } else {
             $messages = "キーワードに当てはまるアイテムがありませんでした。";
 
             return response()->json(
@@ -289,24 +288,15 @@ class ItemsController extends Controller
         // MIMETYPEを取得
         $mime_type = finfo_buffer(finfo_open(), $image, FILEINFO_MIME_TYPE);
 
-        // ファイルのMIMEタイプがimage/pngファイルであれば拡張子「.png」で保存する
-        if (strcmp($mime_type, 'image/png') == 0) {
-            //保存データの準備
-            $storeFilename = rand(). '_image.png';
-            $storeFile = sprintf('%s/%s', $storeDir, $storeFilename);
-        }
-        // ファイルのMIMEタイプがimage/jpeg「.jpeg」で保存する
-        if (strcmp($mime_type, 'image/jpeg') == 0) {
-            //保存データの準備
-            $storeFilename = rand(). '_image.jpeg';
-            $storeFile = sprintf('%s/%s', $storeDir, $storeFilename);
-        }
+        $storeFilename = strcmp($mime_type, 'image/png') == 0 ? uniqid() . '_image.png' : uniqid() . '_image.jpg';
+        $storeFile = sprintf('%s/%s', $storeDir, $storeFilename);
+
 
         //保存データのアップロード
         $disk->put($storeFile, $image);
 
         //ブラウザで確認する用のURLに変更
-        $storeFile = '/storage/'. $storeFile;
+        $storeFile = '/storage/' . $storeFile;
         return $storeFile;
     }
 
@@ -320,7 +310,7 @@ class ItemsController extends Controller
         $disk = Storage::disk('public');
 
         //ファイルパスを修正
-        $fileName = str_replace('/storage/','',$fileName);
+        $fileName = str_replace('/storage/', '', $fileName);
         $disk->delete($fileName);
     }
 
@@ -336,32 +326,32 @@ class ItemsController extends Controller
     public function imageDecode($params)
     {
         // 1. imageが存在しているか
-        if(empty($params['image'])) {
+        if (empty($params['image'])) {
             return $params;
         }
 
         // 2. data:image/png;base64　または　data:image/png;base64が文字列に存在しているか & ログ
-        if(preg_match('/data:image\/png;base64/', $params['image'])) {
+        if (preg_match('/data:image\/png;base64/', $params['image'])) {
             // 3. base_64のデコード
             $base64_encode_image = str_replace('data:image/png;base64,', '', $params['image']);
             $base64_decode_image = base64_decode($base64_encode_image);
 
             // 4. base_64のデコードは成功したか & ログ
-            if(!$base64_decode_image) {
+            if (!$base64_decode_image) {
                 Log::info('data:image\/png;base64のエンコードに失敗しました。');
                 return $params;
             }
 
             $params['image'] = $base64_decode_image;
             return $params;
-        // 2. data:image/jpeg;base64　または　data:image/jpg;base64が文字列に存在しているか & ログ
-        }elseif(preg_match('/data:image\/jpeg;base64/', $params['image'])){
+            // 2. data:image/jpeg;base64　または　data:image/jpg;base64が文字列に存在しているか & ログ
+        } elseif (preg_match('/data:image\/jpeg;base64/', $params['image'])) {
             // 3. base_64のデコード
             $base64_encode_image = str_replace('data:image/jpeg;base64,', '', $params['image']);
             $base64_decode_image = base64_decode($base64_encode_image);
 
             // 4. base_64のデコードは成功したか & ログ
-            if(!$base64_decode_image) {
+            if (!$base64_decode_image) {
                 Log::info('data:image\/png;base64のエンコードに失敗しました。');
                 return $params;
             }
@@ -369,7 +359,7 @@ class ItemsController extends Controller
             $params['image'] = $base64_decode_image;
             return $params;
 
-        }else{
+        } else {
             Log::info('正しいデータではありませんでした。');
             return $params;
         }

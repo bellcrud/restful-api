@@ -69,7 +69,6 @@ paths:
             type: integer
             minimum: 1
           description: アイテムID
-
       responses:
         200:
           description: 200 response
@@ -77,6 +76,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/returnItem'
+        404:
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
         422:
           description: Validation Error
           content:
@@ -95,7 +100,7 @@ paths:
       summary: アイテム更新
       description: アイテムをIDで一件検索しjson形式でアイテムを返す
       requestBody:
-        required: true
+        required: false
         content:
           application/json:
             schema:
@@ -121,6 +126,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NotFoundError'
+        422:
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notExistId'
         500:
           description: "Internal Server Error"
           content:
@@ -180,6 +191,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/returnItems'
+        200(アイテム無):
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/returnItemNothing'
         404:
           description: Validation Error
           content:
@@ -244,14 +261,41 @@ components:
               $ref: '#/components/schemas/created_at'
             updated_at:
               $ref: '#/components/schemas/updated_at'
+        messeage:
+          type: string
+          example: "登録が完了しました。"
+    returnItemSearchById:
+      type: object
+      properties:
+        item:
+          type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            name:
+              $ref: '#/components/schemas/name'
+            description:
+              $ref: '#/components/schemas/description'
+            price:
+              $ref: '#/components/schemas/price'
+            image:
+              $ref: '#/components/schemas/image'
+            created_at:
+              $ref: '#/components/schemas/created_at'
+            updated_at:
+              $ref: '#/components/schemas/updated_at'
+    returnItemNothing:
+      type: object
+      properties:
+        masseage:
+          type: string
+          example: "キーワードに当てはまるアイテムがありませんでした。"
     returnDelete:
       type: object
       properties:
         message:
           type: string
-          example: 削除しました
-
-
+          example: 削除しました。
     ## 404
     NotFoundError:
       type: object
@@ -265,6 +309,9 @@ components:
             message:
               type: string
               example: "リソースがありませんでした"
+            details:
+              type: string
+              example: ""
     ## 422
     ValidationError:
       type: object
@@ -286,11 +333,6 @@ components:
                   items:
                     type: string
                     example: "The name field is required."
-                description:
-                  type: array
-                  items:
-                    type: string
-                    example: "The name description is required."
     notExistId:
       type: object
       properties:
@@ -364,20 +406,25 @@ components:
       description: 価格
       type: integer
       format: int
+      minimum: 0
+      exclusiveMinimum: true
+      maximum: 999999999
+      exclusiveMaximum: false
       example: 10000
     image:
-      description: 画像
+      description: 画像(ファイル形式はjpeg か png)
       type: string
       format: byte
-      example: U3dhZ2dlciByb2Nrcw==
+      example: "/storage/image/5c6b78b5e01f5_image.png"
     created_at:
-      description: 更新日時
+      description: 作成日時
       type: string
-      format: date-time
+      example: "2019-02-14 06:23:37"
     updated_at:
       description: 更新日時
       type: string
       format: date-time
+      example: "2019-02-14 06:23:37"
     ##合計値
     count:
       description: 合計

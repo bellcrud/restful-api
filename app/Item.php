@@ -89,7 +89,7 @@ class Item extends Model
      */
     public static function itemAll()
     {
-        $items = Item::all();;
+        $items = Item::all();
         return $items;
     }
 
