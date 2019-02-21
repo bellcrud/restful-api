@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
-use function GuzzleHttp\Promise\exception_for;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Exception;
+use Illuminate\Support\Facades\Auth;
 
 class SocialAccountController extends Controller
 {
@@ -51,10 +49,13 @@ class SocialAccountController extends Controller
 
         $userGitHubInfo = $user->user;
 
+        //User認証
+        Auth::login($authUser);
 
-        auth()->login($authUser, true);
+        //セッションに取得データ格納
+        session(['userGitHubInfo' => $userGitHubInfo]);
 
-        return view('home', ['user' => $user, 'userGitHubInfo' => $userGitHubInfo]);
+        return redirect('/home');
 
     }
 }

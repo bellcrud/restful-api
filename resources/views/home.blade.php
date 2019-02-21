@@ -14,7 +14,7 @@
 <div class="container">
     <div class="center jumbotron">
         <div class="text-center">
-            <h1>Hello!!{{ $user->name }}</h1>
+
             <div>
                 <a href="/logout" class="btn btn-default btn-md">Log out</a>
             </div>
@@ -43,22 +43,22 @@
                     </tr>
                     <tr>
                         <td>
-                            {{ $user->name }}
+                            {{ session('userGitHubInfo')['login'] }}
                         </td>
                         <td>
-                            {{ $userGitHubInfo['url'] }}
+                            {{ session('userGitHubInfo')['url'] }}
                         </td>
                         <td>
-                            {{ $userGitHubInfo['followers'] }}
+                            {{ session('userGitHubInfo')['followers'] }}
                         </td>
                         <td>
-                            {{ $userGitHubInfo['following'] }}
+                            {{ session('userGitHubInfo')['following'] }}
                         </td>
                         <td>
-                            {{ $userGitHubInfo['public_repos'] }}
+                            {{ session('userGitHubInfo')['public_repos'] }}
                         </td>
                         <td>
-                            {{ $userGitHubInfo['repos_url'] }}
+                            {{ session('userGitHubInfo')['repos_url'] }}
                         </td>
                     </tr>
                 </table>
