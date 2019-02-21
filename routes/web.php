@@ -12,11 +12,18 @@
 */
 
 // ログイン認証
-
-Route::get('login/{provider}',          'Auth\SocialAccountController@redirectToProvider');
+Route::get('login/{provider}', 'Auth\SocialAccountController@redirectToProvider');
 Route::get('login/{provider}/callback', 'Auth\SocialAccountController@handleProviderCallback');
+Route::get('logout', 'Auth\LoginController@logout');
 
+//ログイン画面
 Route::get('/', function () {
     return view('login');
-});
+})->name('login');
 
+//ログイン認証済みの場合アクセス可
+Route::group(['middleware' => 'auth'], function () {
+ Route::get('/home', function () {
+        return view('home');
+    });
+});
