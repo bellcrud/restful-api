@@ -18,7 +18,13 @@ class SocialAccountController extends Controller
     }
 
     /**
-     * Obtain the user information
+     * OAuth処理
+     * ①ユーザー情報をGitHubから取得
+     * ②nameがデータがあり255文字以内か確認。
+     * ③取得したメールアドレスがデータがり255文字以内か確認
+     * ④ユーザー情報を検索または登録っしょりを行う
+     * ⑤ユーザー認証
+     * ⑥ユーザー情報をセッションに格納
      *
      * @return Response
      */
@@ -32,7 +38,7 @@ class SocialAccountController extends Controller
         }
 
         //名前またはニックネームが登録されていないまたは255文字以上の場合ログインページにリダイレクト
-        if ($user->name === NULL || strlen($user->name) === 255 && $user->nickname === NULL || strlen($user->nickname) === 255) {
+        if ($user->name === NULL || strlen($user->name) === 255) {
             return redirect('/')->with('errorMessage', $provider . config('database.nameValidation'));
         }
 

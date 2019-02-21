@@ -28,11 +28,19 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    //ユーザーとアカウントは1対多の関係(複数のアカウントを保持している可能性があるため)
     public function accounts()
     {
         return $this->hasMany('App\LinkedSocialAccount');
     }
 
+    /**
+     * ユーザー情報登録処理
+     * @param $providerUser
+     * @param $provider
+     * @return User
+     * @throws \Throwable
+     */
     public static function registerUser($providerUser, $provider): User
     {
         $user = DB::transaction(function () use ($providerUser, $provider) {
