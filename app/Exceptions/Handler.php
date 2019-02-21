@@ -5,6 +5,8 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpFoundation\Response as StatusCode;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Routing\Redirector;
 
 class Handler extends ExceptionHandler
 {
@@ -32,7 +34,7 @@ class Handler extends ExceptionHandler
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  \Exception  $exception
+     * @param  \Exception $exception
      * @return void
      */
     public function report(Exception $exception)
@@ -43,13 +45,13 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $exception
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Exception $exception
      * @return \Illuminate\Http\Response
      */
     public function render($request, Exception $exception)
     {
-        if($this->isHttpException($exception)) {
+        if ($this->isHttpException($exception)) {
 
             //HTTPステータスコード取得
             $statusCode = $exception->getStatusCode();
@@ -62,7 +64,7 @@ class Handler extends ExceptionHandler
 
                 $statusMessage = "Bad Request";
             } //401エラー
-            elseif ($statusCode == StatusCode::HTTP_UNAUTHORIZED) {
+            elseif ($statusCode == StatusCode::HTTP_UNAUTHORIZED || $exception->getMessage() === 'Unauthenticated.') {
 
                 $statusMessage = "Unauthorized";
             } //404エラー
@@ -106,7 +108,12 @@ class Handler extends ExceptionHandler
                 [],
                 JSON_UNESCAPED_UNICODE
             );
+
+            //ExceptionがAuthenticateだった場合
+        } elseif ($exception instanceof AuthenticationException) {
+            return response()->view('error');
         }
+
         //HTTP通信以外の例外が起こった場合500エラーで返す。
         $statusCode = StatusCode::HTTP_INTERNAL_SERVER_ERROR;
         $statusMessage = "There Is Something Error";
