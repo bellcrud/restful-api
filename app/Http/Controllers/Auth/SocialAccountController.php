@@ -57,6 +57,4 @@ class SocialAccountController extends Controller
         return view('home', ['user' => $user, 'userGitHubInfo' => $userGitHubInfo]);
 
     }
-
-    //public function
 }
