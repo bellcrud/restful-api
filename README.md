@@ -14,7 +14,7 @@ RESTfulなAPI
 - PHP　7.2.5
 
 ####フレームワーク
-- Laravel 5.5
+- Laravel 5.6(＊課題２から5.5から5.6にバージョンアップ)
 
 ####ミドルウェア
 - Mysql 5.7.24
@@ -25,13 +25,18 @@ RESTfulなAPI
 
 ##全体の設計・構成
 
-####機能一覧
+####API機能一覧
 - アイテム全件取得
 - アイテム登録
 - アイテム更新
 - アイテム削除
 - アイテムキーワード検索
 - アイテム一件取得
+
+####OAuth機能一覧
+- ログイン機能
+- ログアウト機能
+- GitHubでのOAuth認証機能
 
 ####ディレクト構成
 ```
@@ -40,13 +45,17 @@ Controllers
 │   ├── ForgotPasswordController.php
 │   ├── LoginController.php
 │   ├── RegisterController.php
-│   └── ResetPasswordController.php
+│   ├── ResetPasswordController.php
+│   └── SocialAccountController.php
 ├── Controller.php
 └── ItemsController.php
+
+
 
 [Model]
 ├── Item.php
 └── User.php
+└── LinkedSocialAccount.php
 
 Middleware
     ├── AjaxOnlyMiddleware.php
@@ -57,10 +66,9 @@ Middleware
     └── VerifyCsrfToken.php
     
 app
+├── SocialAccountService.php
 └── domain
     └── Base64Validation.php
-
-
 ```
 
 
@@ -76,7 +84,7 @@ app
 3. .env.exampleファイルをコピーする
     `$cp .env.example .env`
 4. envファイルを書き換える  
-   ```
+ ```  
    APP_NAME=Laravel
    APP_ENV=local
    APP_KEY=base64:ccVnKA6FMkFRUzRRZ4Nwk07oTSo0LxTLxLkewyk6UNk=
@@ -114,11 +122,11 @@ app
    PUSHER_APP_CLUSTER=mt1
    
    IMAGE_DIRECTORY=storage
-   ```
+```
 ####DB作成
 1. MySQLコンソールを開く
 2. DBを作成する  
-   `CREATE DATABASE items;`
+   `CREATE DATABASE restful_api;`
 3. マイグレーション実行  
         `php artisan migrate`
 
@@ -134,7 +142,16 @@ app
 
 ####シンボリックの作成
 1. シンボリックリンクを作成する.
-   アップロードしたファイルを閲覧するのに必要
+   アップロードしたファイルを閲覧するのに必要  
     `$php artisan storage:link`
 
+####APIキー設定  
+.envファイルに以下を追記してください
+```
+GITHUB_CLIENT_ID=***********
+GITHUB_CLIENT_SECRET=**********
+「**********」にはGitHubアプリケーションの登録後に提供された値を記述してください
+```
+GitHubのAPIキー作成取得方法は以下のサイトを参照してください
+(作成方法)[https://yurakawa.hatenablog.jp/entry/2018/06/04/002033]
  
