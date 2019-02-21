@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -30,5 +31,18 @@ class User extends Authenticatable
     public function accounts()
     {
         return $this->hasMany('App\LinkedSocialAccount');
+    }
+
+    public static function registerUser($providerUser, $provider): User
+    {
+        $user = DB::transaction(function () use ($providerUser, $provider) {
+            $user = User::create([
+                'email' => $providerUser->getEmail(),
+                'name' => $providerUser->getName(),
+            ]);
+
+            return $user;
+        });
+        return $user;
     }
 }

@@ -3,9 +3,13 @@
 namespace App;
 
 use Laravel\Socialite\Contracts\User as ProviderUser;
+use Illuminate\Support\Facades\DB;
+use App\User;
 
 class SocialAccountService
 {
+    //Userインスタンス
+    public $user = null;
 
     /**
      * アカウント検索と登録処置
@@ -29,12 +33,11 @@ class SocialAccountService
         } else {
             $user = User::where('email', $providerUser->getEmail())->first();
 
+            //ユーザーがと登録されていなければusersテーブルとlinked_social_accountsテーブルに登録
             if (!$user) {
-                $user = User::create([
-                    'email' => $providerUser->getEmail(),
-                    'name' => $providerUser->getName(),
-                ]);
+                $user = User::registerUser($providerUser, $provider);
             }
+            LinkedSocialAccount::registerLinkedSocialAccount($user, $providerUser, $provider);
 
             $user->accounts()->create([
                 'provider_id' => $providerUser->getId(),
