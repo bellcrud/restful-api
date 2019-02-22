@@ -15,10 +15,11 @@ class CreateLinkedSocialAccountsTable extends Migration
     {
         Schema::create('linked_social_accounts', function (Blueprint $table) {
             $table->increments('id');
-            $table->bigInteger('user_id');
-            $table->string('provider_name')->nullable();
-            $table->string('provider_id')->unique()->nullable();
+            $table->integer('user_id')->unsigned()->comment('usersテーブルに登録されているユーザーID');
+            $table->string('provider_name')->nullable()->comment('OAuth認証先のアプリ名');
+            $table->string('provider_id')->unique()->nullable()->comment('OAuth認証先のID');
             $table->timestamps();
+            $table->foreign('user_id')->references('id')->on('users')->comment('外部キー制約をつける参照先はusersテーブルidカラム');
         });
     }
 

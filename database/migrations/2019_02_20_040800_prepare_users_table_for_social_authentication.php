@@ -15,7 +15,7 @@ class PrepareUsersTableForSocialAuthentication extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //取得したアカウント情報のパスワードが登録されていない場合があるためnull許容に変更
-            $table->string('password')->nullable()->change();
+            $table->string('password')->nullable()->change()->comment('OAuth認証先でパスワードを登録していない可能性があるためnull許容');
         });
     }
 
@@ -27,7 +27,7 @@ class PrepareUsersTableForSocialAuthentication extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('email')->nullable(false)->change();
+            $table->string('password')->nullable(false)->change();
         });
     }
 }
