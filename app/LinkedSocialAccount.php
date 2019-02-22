@@ -26,14 +26,11 @@ class LinkedSocialAccount extends Model
      */
     public static function registerLinkedSocialAccount($user, $providerUser, $provider)
     {
-        $user = DB::transaction(function () use ($user, $providerUser, $provider) {
+        DB::transaction(function () use ($user, $providerUser, $provider) {
             $user->accounts()->create([
                 'provider_id' => $providerUser->getId(),
                 'provider_name' => $provider,
             ]);
-            return $user;
         });
-
-        return $user;
     }
 }

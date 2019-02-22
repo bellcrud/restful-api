@@ -27,6 +27,7 @@ class SocialAccountController extends Controller
      * ⑥ユーザー情報をセッションに格納
      *
      * @return Response
+     * @throws \Throwable
      */
     public function handleProviderCallback(\App\SocialAccountService $accountService, $provider)
     {
@@ -34,17 +35,17 @@ class SocialAccountController extends Controller
         try {
             $user = \Socialite::with($provider)->user();
         } catch (\Exception $e) {
-            return redirect('/')->with('errorMessage', $provider . config('database.socialCertificationError'));;
+            return redirect('/')->with('errorMessage', $provider . config('database.socialCertificationError'));
         }
 
-        //名前またはニックネームが登録されていないまたは255文字以上の場合ログインページにリダイレクト
-        if ($user->name === NULL || strlen($user->name) === 255) {
+        //名前とメールアドレスのバリデーションルールを用意
+        $input = ['name' => $user->name, 'email' => $user->email, 'providerId' => $user->email, 'providerName' => $provider];
+        $rule = ['name' => 'required|max:255', 'email' => 'required|max:255|email', 'providerId' => 'required', 'providerName' => 'required'];
+
+        //バリデーション処理を実行
+        $validator = \Validator::make($input, $rule);
+        if ($validator->fails()) {
             return redirect('/')->with('errorMessage', $provider . config('database.nameValidation'));
-        }
-
-        //メールアドレスが登録されていないまたは255文字以上の場合ログインページにリダイレクト
-        if ($user->email === NULL || strlen($user->email) === 255) {
-            return redirect('/')->with('errorMessage', $provider . config('database.emailValidation'));
         }
 
         //ユーザー情報を検索または登録
@@ -53,13 +54,11 @@ class SocialAccountController extends Controller
             $provider
         );
 
-        $userGitHubInfo = $user->user;
-
         //User認証
         Auth::login($authUser);
 
         //セッションに取得データ格納
-        session(['userGitHubInfo' => $userGitHubInfo]);
+        session(['userGitHubInfo' => $user->user]);
 
         return redirect('/home');
 

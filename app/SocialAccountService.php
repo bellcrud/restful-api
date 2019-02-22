@@ -19,6 +19,7 @@ class SocialAccountService
      * @param ProviderUser $providerUser
      * @param $provider
      * @return User|\Illuminate\Database\Eloquent\Model|mixed|object|null
+     * @throws \Throwable
      */
     public function findOrCreate(ProviderUser $providerUser, $provider)
     {
@@ -38,11 +39,6 @@ class SocialAccountService
                 $user = User::registerUser($providerUser, $provider);
             }
             LinkedSocialAccount::registerLinkedSocialAccount($user, $providerUser, $provider);
-
-            $user->accounts()->create([
-                'provider_id' => $providerUser->getId(),
-                'provider_name' => $provider,
-            ]);
 
             return $user;
 
