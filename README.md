@@ -1,5 +1,4 @@
-#RESTful-API
-
+#課題1 RESTful-API
 ##概要
 DBに登録されたアイテム情報を登録・検索・変更・削除ができる  
 RESTfulなAPI  
@@ -14,7 +13,7 @@ RESTfulなAPI
 - PHP　7.2.5
 
 ####フレームワーク
-- Laravel 5.6(＊課題２から5.5から5.6にバージョンアップ)
+- Laravel 5.5
 
 ####ミドルウェア
 - Mysql 5.7.24
@@ -33,11 +32,6 @@ RESTfulなAPI
 - アイテムキーワード検索
 - アイテム一件取得
 
-####OAuth機能一覧
-- ログイン機能
-- ログアウト機能
-- GitHubでのOAuth認証機能
-
 ####ディレクト構成
 ```
 Controllers
@@ -46,7 +40,6 @@ Controllers
 │   ├── LoginController.php
 │   ├── RegisterController.php
 │   ├── ResetPasswordController.php
-│   └── SocialAccountController.php
 ├── Controller.php
 └── ItemsController.php
 
@@ -55,7 +48,6 @@ Controllers
 [Model]
 ├── Item.php
 └── User.php
-└── LinkedSocialAccount.php
 
 Middleware
     ├── AjaxOnlyMiddleware.php
@@ -66,7 +58,6 @@ Middleware
     └── VerifyCsrfToken.php
     
 app
-├── SocialAccountService.php
 └── domain
     └── Base64Validation.php
 ```
@@ -128,11 +119,12 @@ app
 2. DBを作成する  
    `CREATE DATABASE restful_api;`
 3. マイグレーション実行  
-        `php artisan migrate`
-
-####アイテム画像ファイル格納設定
-1. public/storageからstorage/app/publicへシンボリックリンクを張る  
-```php artisan storage:link```
+        `php artisan migrate``
+        
+####シンボリックの作成
+ 1. public/storageからstorage/app/publicへシンボリックリンクを張る  
+    アップロードしたファイルを閲覧するのに必要  
+     `php artisan storage:link`
 
 ####サーバ起動
 1. サーバーを起動する  
@@ -140,10 +132,73 @@ app
    
 2. http://localhost:8000 にアクセスする。
 
-####シンボリックの作成
-1. シンボリックリンクを作成する.
-   アップロードしたファイルを閲覧するのに必要  
-    `$php artisan storage:link`
+    
+#基本課題2「OAuthを使ったソーシャルログイン」
+####概要
+OAuthを利用したログイン/ログアウト機能の実装。
+- ログイン機能
+- ログアウト機能
+- GitHubでのOAuth認証機能
+
+####言語
+課題１と同様
+
+####フレームワーク
+- Laravel 5.6(＊課題２から5.5から5.6にバージョンアップ)
+
+####ミドルウェア
+課題1と同様
+
+####その他
+- Socialite
+
+##全体の設計・構成
+
+####OAuth認証一覧機能
+- ログイン機能
+- ログアウト機能
+- GitHubでのOAuth認証機能
+- Github登録情報を表示
+
+####ディレクト構成
+```
+Controllers
+├── Auth
+│   ├── ForgotPasswordController.php
+│   ├── LoginController.php
+│   ├── RegisterController.php
+│   ├── ResetPasswordController.php
+│   └── SocialAccountController.php　//課題２で新規追加
+├── Controller.php
+└── ItemsController.php
+
+
+
+[Model]
+├── Item.php
+└── User.php
+└── LinkedSocialAccount.php　//課題２で新規追加
+
+Middleware
+    ├── AjaxOnlyMiddleware.php
+    ├── EncryptCookies.php
+    ├── RedirectIfAuthenticated.php
+    ├── TrimStrings.php
+    ├── TrustProxies.php
+    └── VerifyCsrfToken.php
+    
+app
+├── SocialAccountService.php　//課題２で新規追加
+└── domain
+    └── Base64Validation.php
+```
+##開発環境のセットアップ手順
+
+####ミドルウェアのインストール
+課題1と同様
+
+####Laravel環境の構築
+課題1と同様
 
 ####APIキー設定  
 .envファイルに以下を追記してください
@@ -153,5 +208,20 @@ GITHUB_CLIENT_SECRET=**********
 「**********」にはGitHubアプリケーションの登録後に提供された値を記述してください
 ```
 GitHubのAPIキー作成取得方法は以下のサイトを参照してください
-(作成方法)[https://yurakawa.hatenablog.jp/entry/2018/06/04/002033]
- 
+(作成方法)[https://yurakawa.hatenablog.jp/entry/2018/06/04/002033]  
+作成する際に必要な項目には以下の値を入力してください  
+Application name　`okura-restful-api`  
+Homepage URL `http://localhost:8000/`  
+Authorization callback URL `http://localhost:8000/login/github/callback`  
+
+####サーバ起動
+1. サーバーを起動する  
+   `php artisan serve --host=localhost`  
+   
+2. http://localhost:8000 にアクセスする。
+
+3. GitHubのアカウントでログインをすることできます。  
+アカウントは任意のアカウントで問題ありません。  
+＊ただし、アカウント情報にnameやe-mailの情報が登録されていないまたは、正しい情報出ない場合(名前が255文字以上など)
+登録できない可能性があります。エラーメッセージにしたがって修正するかまたは、別のアカウントを使用してください。
+　　
