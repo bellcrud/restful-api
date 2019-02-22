@@ -4,9 +4,9 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Symfony\Component\HttpFoundation\Response as StatusCode;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Auth\AuthenticationException;
-use Illuminate\Routing\Redirector;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -30,12 +30,26 @@ class Handler extends ExceptionHandler
     ];
 
     /**
+     * APIでアクセスした場合のステータスコードに対するメッセージ一覧
+     * @var array
+     */
+    protected $statusCodeMessage = [
+        200 => 'OK',
+        400 => 'Bad Request',
+        401 => '権限がありません',
+        404 => 'リソースがありませんでした',
+        422 => 'バリデーションエラーです',
+        500 => 'サーバーで予期しないエラーが起きました。',
+    ];
+
+    /**
      * Report or log an exception.
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
      * @param  \Exception $exception
      * @return void
+     * @throws Exception
      */
     public function report(Exception $exception)
     {
@@ -51,81 +65,79 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        if ($this->isHttpException($exception)) {
+        return parent::render($request, $exception);
+    }
 
-            //HTTPステータスコード取得
-            $statusCode = $exception->getStatusCode();
+    /**
+     * 親クラスのprepareJsonResponseをオーバーライド
+     * このメソッドはjson形式でresponseする場合のみ実行される
+     * 以下の3つjson形式で返す
+     * ①HTTPステータスコード
+     * ②メッセージ
+     * ③詳細
+     * @param \Illuminate\Http\Request $request
+     * @param Exception $exception
+     * @return JsonResponse
+     */
+    protected function prepareJsonResponse($request, Exception $exception)
+    {
 
-            //エラーメッセージ取得
-            $details = $exception->getMessage();
-
-            //400エラー
-            if ($statusCode == StatusCode::HTTP_BAD_REQUEST) {
-
-                $statusMessage = "Bad Request";
-            } //401エラー
-            elseif ($statusCode == StatusCode::HTTP_UNAUTHORIZED || $exception->getMessage() === 'Unauthenticated.') {
-
-                $statusMessage = "Unauthorized";
-            } //404エラー
-            elseif ($statusCode == StatusCode::HTTP_NOT_FOUND) {
-
-                $statusMessage = "リソースがありませんでした";
-            } //405エラー
-            elseif ($statusCode == StatusCode::HTTP_METHOD_NOT_ALLOWED) {
-
-                $statusMessage = "Method Not Allowed";
-            } //422エラー
-            elseif ($statusCode == StatusCode::HTTP_UNPROCESSABLE_ENTITY) {
-
-                $statusMessage = "バリデーション エラーです";
-                $details = $exception->getHeaders();
-            } //500エラー
-            elseif ($statusCode == StatusCode::HTTP_INTERNAL_SERVER_ERROR) {
-
-                $statusMessage = "サーバで予期しないエラーが発生しました";
-            } //503エラー
-            elseif ($statusCode == StatusCode::HTTP_SERVICE_UNAVAILABLE) {
-
-                $statusMessage = "Service Unavailable";
-            } //その他500エラー
-            else {
-
-                $statusCode = StatusCode::HTTP_INTERNAL_SERVER_ERROR;
-                $statusMessage = "There Is Something Error";
-
-            };
-
-            $errors = [
-                'code' => $statusCode,
-                'message' => $statusMessage,
-                'details' => $details,
-            ];
-
-            return response()->json(
-                ['errors' => $errors],
-                $statusCode,
-                [],
-                JSON_UNESCAPED_UNICODE
-            );
-
-            //ExceptionがAuthenticateだった場合
-        } elseif ($exception instanceof AuthenticationException) {
-            return response()->view('error');
-        }
-
-        //HTTP通信以外の例外が起こった場合500エラーで返す。
-        $statusCode = StatusCode::HTTP_INTERNAL_SERVER_ERROR;
-        $statusMessage = "There Is Something Error";
+        //exceptionがHTTPException以外の場合全てステータスコードを500で返す
         $errors = [
-            'code' => $statusCode,
-            'message' => $statusMessage,
+            'code' => $this->isHttpException($exception) ? $exception->getStatusCode() : 500,
+            'message' => $this->getStatusCodeMessage($this->isHttpException($exception) ? $exception->getStatusCode() : 500),
+            'details' => $exception->getMessage(),
         ];
+
         return response()->json(
             ['errors' => $errors],
-            $statusCode,
+            $this->isHttpException($exception) ? $exception->getStatusCode() : 500,
             [],
             JSON_UNESCAPED_UNICODE
         );
     }
+
+    /**
+     * ステータスコードに対するメッセージを取得する
+     * 取得先はこのクラスに定義しているプロパティの'statusCodeMessage'
+     * @param int $statusCode
+     * @return mixed
+     */
+    public function getStatusCodeMessage(int $statusCode)
+    {
+        return $this->statusCodeMessage[$statusCode];
+    }
+
+    /**
+     * ログインせずにログインが必要なルートにアクセスした場合のメッセージを格納
+     * @param Exception $exception
+     * @return Exception|HttpException
+     */
+    protected function prepareException(Exception $exception)
+    {
+        if ($exception instanceof AuthenticationException) {
+            $exception = new HttpException(401, 'ログインをしてからアクセスしてください');
+        }
+        return $exception;
+    }
+
+    /**
+     * レスポンスで画面遷移先指定し、Exceptionの内容を画面で表示できるようにjsonに格納
+     * @param HttpException $exception
+     * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response
+     */
+    protected function renderHttpException(HttpException $exception)
+    {
+        return response()->view("error",
+            [
+                'exception'   => $exception,
+                'message'     => $exception->getMessage(),
+                'status_code' => $exception->getStatusCode(),
+            ],
+            $exception->getStatusCode(), // レスポンス自体のステータスコード
+            $exception->getHeaders()
+        );
+
+    }
+
 }
