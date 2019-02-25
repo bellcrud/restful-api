@@ -34,10 +34,12 @@ class SocialAccountService
         } else {
             $user = User::where('email', $providerUser->getEmail())->first();
 
-            //ユーザーがと登録されていなければusersテーブルとlinked_social_accountsテーブルに登録
+            //ユーザーが登録されていなければusersテーブルとlinked_social_accountsテーブルに登録
             if (!$user) {
                 $user = User::registerUser($providerUser, $provider);
+                return $user;
             }
+            //ユーザーが登録されていればlinked_social_accountsのみに登録する
             LinkedSocialAccount::registerLinkedSocialAccount($user, $providerUser, $provider);
 
             return $user;
