@@ -4,6 +4,12 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
+use Laravel\Socialite\Facades\Socialite;
+use App\SocialAccountService;
+use Validator;
+use Exception;
+
 
 class SocialAccountController extends Controller
 {
@@ -17,35 +23,37 @@ class SocialAccountController extends Controller
         return \Socialite::driver($provider)->redirect();
     }
 
+
     /**
      * OAuth処理
-     * ①ユーザー情報をGitHubから取得
      * ②nameがデータがあり255文字以内か確認。
      * ③取得したメールアドレスがデータがり255文字以内か確認
      * ④ユーザー情報を検索または登録っしょりを行う
      * ⑤ユーザー認証
      * ⑥ユーザー情報をセッションに格納
-     *
-     * @return Response
+     * @param SocialAccountService $accountService
+     * @param $provider
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @throws ValidationException
      * @throws \Throwable
      */
-    public function handleProviderCallback(\App\SocialAccountService $accountService, $provider)
+    public function handleProviderCallback(SocialAccountService $accountService, $provider)
     {
         //ユーザー情報取得
         try {
-            $user = \Socialite::with($provider)->user();
-        } catch (\Exception $e) {
+            $user = Socialite::with($provider)->user();
+        } catch (Exception $e) {
             return redirect('/')->with('errorMessage', $provider . config('database.socialCertificationError'));
         }
 
-        //名前とメールアドレスのバリデーションルールを用意
-        $input = ['name' => $user->name, 'email' => $user->email, 'providerId' => $user->email, 'providerName' => $provider];
+        //名前・メールアドレス・プロバイダーID・プロバイダーネームのバリデーションルールを用意
+        $input = ['name' => $user->name, 'email' => $user->email, 'providerId' => $user->id, 'providerName' => $provider];
         $rule = ['name' => 'required|max:255', 'email' => 'required|max:255|email', 'providerId' => 'required', 'providerName' => 'required'];
 
         //バリデーション処理を実行
-        $validator = \Validator::make($input, $rule);
+        $validator = Validator::make($input, $rule);
         if ($validator->fails()) {
-            return redirect('/')->with('errorMessage', $provider . config('database.nameValidation'));
+            throw new ValidationException($validator);
         }
 
         //ユーザー情報を検索または登録
