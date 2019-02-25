@@ -121,7 +121,5 @@ return [
      * OAuth認証
      * Socialiteメッセージ
      */
-    'nameValidation' => 'で名前が登録されていないまたは名前が長すぎます。',
-    'emailValidation' => 'でメールアドレスが登録されていないまたはメールアドレスが長すぎます。',
     'socialCertificationError' => 'で認証に失敗しました。再度やり直してください。',
 ];
