@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class Handler extends ExceptionHandler
@@ -115,14 +116,21 @@ class Handler extends ExceptionHandler
      */
     protected function prepareException(Exception $exception)
     {
+        //Laravel側のデフォルトの処理を邪魔しないように先に実行しておく
+        $exception = parent::prepareException($exception);
+
         if ($exception instanceof AuthenticationException) {
+            //ログインしていない場合はログイン画面にリダイレクトする
             $exception = new HttpException(401, 'ログインをしてからアクセスしてください');
+        } elseif ($exception instanceof ValidationException) {
+            //バリデーションエラーの場合はerror画面にリダイレクトする。
+            $exception->redirectTo('error');
         }
         return $exception;
     }
 
     /**
-     * レスポンスで画面遷移先指定し、Exceptionの内容を画面で表示できるようにjsonに格納
+     * レスポンスで画面遷移先指定し、Exceptionの内容を画面で表示できるように配列に格納
      * @param HttpException $exception
      * @return \Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response
      */
@@ -130,8 +138,8 @@ class Handler extends ExceptionHandler
     {
         return response()->view("error",
             [
-                'exception'   => $exception,
-                'message'     => $exception->getMessage(),
+                'exception' => $exception,
+                'message' => $exception->getMessage(),
                 'status_code' => $exception->getStatusCode(),
             ],
             $exception->getStatusCode(), // レスポンス自体のステータスコード
