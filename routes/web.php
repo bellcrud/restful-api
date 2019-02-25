@@ -1,5 +1,4 @@
 <?php
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -23,7 +22,12 @@ Route::get('/', function () {
 
 //ログイン認証済みの場合アクセス可
 Route::group(['middleware' => 'auth'], function () {
- Route::get('/home', function () {
+    Route::get('/home', function () {
         return view('home');
     });
+});
+
+//エラー画面
+Route::get('error', function () {
+    return view('error');
 });
