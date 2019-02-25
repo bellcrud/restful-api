@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
+
 class LinkedSocialAccount extends Model
 {
     protected $fillable = ['provider_name', 'provider_id'];
@@ -12,7 +13,7 @@ class LinkedSocialAccount extends Model
     //ユーザーとアカウントは1対多の関係
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(User::class);
     }
 
 
