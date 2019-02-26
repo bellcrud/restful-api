@@ -48,10 +48,6 @@ class User extends Authenticatable
                 'email' => $providerUser->getEmail(),
                 'name' => $providerUser->getName(),
             ]);
-            //linked_social_accountsの登録に失敗した場合、usersテーブルに作成したデータをrollbackするためここで
-            //同様のトランザクション内でSQLを実行する。
-            //registerLinkedSocialAccountでもトランザクションを張っているため、トランザクションのネストになっている
-            LinkedSocialAccount::registerLinkedSocialAccount($user, $providerUser, $provider);
             return $user;
         });
         return $user;
