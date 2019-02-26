@@ -21,25 +21,27 @@ class SocialAccountService
      */
     public function findOrCreate(ProviderUser $providerUser, $provider)
     {
-        //アカウント情報が登録されているかの確認
-        $account = LinkedSocialAccount::findUser($providerUser, $provider);
+        return DB::transaction(function () use ($providerUser, $provider) {
+            //アカウント情報が登録されているかの確認
+            $account = LinkedSocialAccount::findUser($providerUser, $provider);
 
-        //アカウントが登録されていればアカウント情報を返すのみ
-        if ($account) {
-            return $account->user;
-        } else {
+            //アカウントが登録されていればアカウント情報を返すのみ
+            if ($account) {
+                return $account->user;
+            }
             $user = User::where('email', $providerUser->getEmail())->first();
 
             //ユーザーが登録されていなければusersテーブルとlinked_social_accountsテーブルに登録
             if (!$user) {
-                $user = UserService::registerUser($providerUser, $provider);
+                $user = User::registerUser($providerUser, $provider);
+
+                LinkedSocialAccount::registerLinkedSocialAccount($user, $providerUser, $provider);
                 return $user;
             }
             //ユーザーが登録されていればlinked_social_accountsのみに登録する
             LinkedSocialAccount::registerLinkedSocialAccount($user, $providerUser, $provider);
 
             return $user;
-
-        }
+        });
     }
 }

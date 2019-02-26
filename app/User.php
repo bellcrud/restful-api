@@ -43,13 +43,10 @@ class User extends Authenticatable
      */
     public static function registerUser($providerUser, $provider): User
     {
-        $user = DB::transaction(function () use ($providerUser, $provider) {
-            $user = User::create([
-                'email' => $providerUser->getEmail(),
-                'name' => $providerUser->getName(),
-            ]);
-            return $user;
-        });
+        $user = User::create([
+            'email' => $providerUser->getEmail(),
+            'name' => $providerUser->getName(),
+        ]);
         return $user;
     }
 }
