@@ -3,6 +3,7 @@
 namespace App;
 
 use Laravel\Socialite\Contracts\User as ProviderUser;
+use Illuminate\Support\Facades\DB;
 
 class SocialAccountService
 {
@@ -21,6 +22,7 @@ class SocialAccountService
      */
     public function findOrCreate(ProviderUser $providerUser, $provider)
     {
+        //トランザクションのネストを避けるため、トランザクションをこのメソッド全体で張る
         return DB::transaction(function () use ($providerUser, $provider) {
             //アカウント情報が登録されているかの確認
             $account = LinkedSocialAccount::findUser($providerUser, $provider);
