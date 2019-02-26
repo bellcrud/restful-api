@@ -28,7 +28,7 @@ class SocialAccountController extends Controller
      * OAuth処理
      * ②nameがデータがあり255文字以内か確認。
      * ③取得したメールアドレスがデータがり255文字以内か確認
-     * ④ユーザー情報を検索または登録っしょりを行う
+     * ④ユーザー情報を検索または登録処理を行う
      * ⑤ユーザー認証
      * ⑥ユーザー情報をセッションに格納
      * @param SocialAccountService $accountService
@@ -43,7 +43,7 @@ class SocialAccountController extends Controller
         try {
             $user = Socialite::with($provider)->user();
         } catch (Exception $e) {
-            return redirect('/')->with('errorMessage', $provider . config('database.socialCertificationError'));
+            return redirect('/')->with('errorMessage', $provider . config('messages.socialCertificationError'));
         }
 
         //名前・メールアドレス・プロバイダーID・プロバイダーネームのバリデーションルールを用意
@@ -51,10 +51,7 @@ class SocialAccountController extends Controller
         $rule = ['name' => 'required|max:255', 'email' => 'required|max:255|email', 'providerId' => 'required', 'providerName' => 'required'];
 
         //バリデーション処理を実行
-        $validator = Validator::make($input, $rule);
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
+        Validator::make($input, $rule)->validate();
 
         //ユーザー情報を検索または登録
         $authUser = $accountService->findOrCreate(
