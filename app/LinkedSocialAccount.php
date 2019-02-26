@@ -34,4 +34,16 @@ class LinkedSocialAccount extends Model
             ]);
         });
     }
+
+
+    /**
+     * プロバイダーIDを検索条件にし、linked_social_accountテーブルから検索する。
+     * @return LinkedSocialAccount|Model|object|null
+     */
+    public static function findUser($providerUser, $provider)
+    {
+        return LinkedSocialAccount::where('provider_name', $provider)
+            ->where('provider_id', $providerUser->getId())
+            ->first();
+    }
 }

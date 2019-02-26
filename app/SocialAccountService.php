@@ -3,8 +3,6 @@
 namespace App;
 
 use Laravel\Socialite\Contracts\User as ProviderUser;
-use Illuminate\Support\Facades\DB;
-use App\User;
 
 class SocialAccountService
 {
@@ -24,9 +22,7 @@ class SocialAccountService
     public function findOrCreate(ProviderUser $providerUser, $provider)
     {
         //アカウント情報が登録されているかの確認
-        $account = LinkedSocialAccount::where('provider_name', $provider)
-            ->where('provider_id', $providerUser->getId())
-            ->first();
+        $account = LinkedSocialAccount::findUser($providerUser, $provider);
 
         //アカウントが登録されていればアカウント情報を返すのみ
         if ($account) {
@@ -36,7 +32,7 @@ class SocialAccountService
 
             //ユーザーが登録されていなければusersテーブルとlinked_social_accountsテーブルに登録
             if (!$user) {
-                $user = User::registerUser($providerUser, $provider);
+                $user = UserService::registerUser($providerUser, $provider);
                 return $user;
             }
             //ユーザーが登録されていればlinked_social_accountsのみに登録する
