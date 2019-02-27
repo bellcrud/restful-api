@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,7 +14,9 @@ use Illuminate\Http\Request;
 */
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+	return $request->user();
 });
-Route::get('v1/items/search', 'ItemsController@search')->middleware('ajax');
-Route::resource('v1/items', 'ItemsController')->middleware('ajax');
+Route::group(['middleware' => ['ajax', 'token']], function () {
+	Route::get('v1/items/search', 'ItemsController@search');
+	Route::resource('v1/items', 'ItemsController');
+});
