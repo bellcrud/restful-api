@@ -25,7 +25,7 @@ class TokenCheck
 			$token = Token::findByToken($request->header('Authorization'));
 
 			//トークンがTokensテーブルに存在しかつ有効期限が過ぎていないかチェック
-			if($token->count() && !Token::calculationPastDay($token->created_at))
+			if(!empty($token) && !Token::calculationPastDay($token->created_at))
 			{
 				return $next($request);
 			}
