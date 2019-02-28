@@ -17,6 +17,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/returnItems'
+        401:
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
         404:
           description: "Not found"
           content:
@@ -41,7 +47,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/returnItem'
-
+        401:
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
         422:
           description: バリデーション エラー
           content:
@@ -76,6 +87,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/returnItem'
+        401:
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
         404:
           description: "Not found"
           content:
@@ -120,6 +137,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/returnItem'
+        401:
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
         404:
           description: "Not found"
           content:
@@ -158,6 +181,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/returnDelete'
+        401:
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
         404:
           description: Validation Error
           content:
@@ -197,6 +226,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/returnItemNothing'
+        401:
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
         404:
           description: Validation Error
           content:
@@ -296,6 +331,22 @@ components:
         message:
           type: string
           example: 削除しました。
+    ## 401
+    Unauthorized:
+      type: object
+      properties:
+        errors:
+          type: object
+          properties:
+            code:
+              type: string
+              example: 401
+            message:
+              type: string
+              example: "権限がありません"
+            details:
+              type: string
+              example: "Token is nothing or is expired"
     ## 404
     NotFoundError:
       type: object
