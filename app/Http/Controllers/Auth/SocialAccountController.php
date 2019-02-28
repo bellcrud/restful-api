@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Token;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -66,11 +65,8 @@ class SocialAccountController extends Controller
 		//User認証
 		Auth::login($authUser);
 
-		//Token取得または作成
-		$token = Token::createCheckToken($authUser->id);
-
 		//セッションに取得データ格納
-		session([ 'userGitHubInfo' => $user->user, 'token' => $token->token ]);
+		session([ 'userGitHubInfo' => $user->user ]);
 
 		return redirect('/home');
 
