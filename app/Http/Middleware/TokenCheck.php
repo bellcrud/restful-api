@@ -10,7 +10,8 @@ class TokenCheck
 {
 	/**
 	 * Handle an incoming request.
-	 *
+	 * トークンチェック
+	 * ヘッダーに組み込まれたトークンを検索し、Exception\Handlerに渡す
 	 * @param  \Illuminate\Http\Request $request
 	 * @param  \Closure $next
 	 * @return mixed
@@ -18,19 +19,16 @@ class TokenCheck
 	 */
     public function handle($request, Closure $next)
     {
-    	//ヘッダーに認証用トークンが含まれているか確認
-		if ($request->header('Authorization'))
-		{
-			//渡されたトークンがTokensテーブルに存在するか検索
-			$token = Token::findByToken($request->header('Authorization'));
+		//ヘッダーに認証用トークンが含まれているか確認
+		if (!$request->header('Authorization')){
+			throw new TokenException();
 
-			//トークンがTokensテーブルに存在しかつ有効期限が過ぎていないかチェック
-			if(!empty($token) && !Token::calculationPastDay($token->created_at))
-			{
-				return $next($request);
-			}
+			////トークンがTokensテーブルに存在しかつ有効期限が過ぎていないかチェック
+		}elseif (!empty($token = Token::findByToken($request->header('Authorization'))) && !Token::calculationPastDay($token->created_at))
+		{
+			return $next($request);
+		}else{
 			throw new TokenException();
 		}
-		throw new TokenException();
     }
 }
