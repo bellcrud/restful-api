@@ -43,6 +43,8 @@ class SocialAccountController extends Controller
         try {
             $user = Socialite::with($provider)->user();
         } catch (Exception $e) {
+			//handlerに渡らないので、エラーログを出力
+			Log::warning($e);
             return redirect('/')->with('errorMessage', $provider . config('messages.socialCertificationError'));
         }
 
