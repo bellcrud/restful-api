@@ -40,6 +40,9 @@
                         <th>
                             リポジトリURL
                         </th>
+                        <th>
+                            トークン
+                        </th>
                     </tr>
                     <tr>
                         <td>
@@ -59,6 +62,9 @@
                         </td>
                         <td>
                             {{ session('userGitHubInfo')['repos_url'] }}
+                        </td>
+                        <td style="word-break: break-all;">
+                            {{ session('token') }}
                         </td>
                     </tr>
                 </table>
