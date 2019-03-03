@@ -1,5 +1,5 @@
 <?php
 return [
-	//トークンの有効日数30日間
-	'expirationDate' => 30,
+    //トークンの有効日数30日間
+    'expirationDate' => 30,
 ];

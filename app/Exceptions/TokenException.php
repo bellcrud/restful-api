@@ -7,9 +7,9 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class TokenException extends HttpException
 {
-	public function __construct()
-	{
-		$message = "Token is nothing or is expired";
-		parent::__construct(Response::HTTP_UNAUTHORIZED,$message);
-	}
+    public function __construct()
+    {
+        $message = "Token is nothing or is expired";
+        parent::__construct(Response::HTTP_UNAUTHORIZED, $message);
+    }
 }

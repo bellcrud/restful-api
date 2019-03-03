@@ -14,9 +14,9 @@ use Illuminate\Http\Request;
 */
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
-	return $request->user();
+    return $request->user();
 });
-Route::group([ 'middleware' => [ 'ajax', 'token' ] ], function () {
-	Route::get('v1/items/search', 'ItemsController@search');
-	Route::resource('v1/items', 'ItemsController', [ 'only' => [ 'index', 'store', 'show', 'update', 'destroy' ] ]);
+Route::group(['middleware' => ['ajax', 'token']], function () {
+    Route::get('v1/items/search', 'ItemsController@search');
+    Route::resource('v1/items', 'ItemsController', ['only' => ['index', 'store', 'show', 'update', 'destroy']]);
 });
