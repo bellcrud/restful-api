@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Token;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Laravel\Socialite\Facades\Socialite;
 use App\SocialAccountService;
@@ -43,8 +45,8 @@ class SocialAccountController extends Controller
         try {
             $user = Socialite::with($provider)->user();
         } catch (Exception $e) {
-			//handlerに渡らないので、エラーログを出力
-			Log::warning($e);
+            //handlerに渡らないので、エラーログを出力
+            Log::warning($e);
             return redirect('/')->with('errorMessage', $provider . config('messages.socialCertificationError'));
         }
 
@@ -64,8 +66,11 @@ class SocialAccountController extends Controller
         //User認証
         Auth::login($authUser);
 
+        //token取得
+        $token = Token::createCheckToken($authUser->id);
+
         //セッションに取得データ格納
-        session(['userGitHubInfo' => $user->user]);
+        session(['userGitHubInfo' => $user->user, 'token' => $token->token]);
 
         return redirect('/home');
 
