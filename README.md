@@ -73,14 +73,14 @@ migrations
 ├── 2019_02_20_025008_create_linked_social_accounts_table.php
 ├── 2019_02_20_040800_prepare_users_table_for_social_authentication.php
 ├── 2019_02_26_083823_create_tokens_table.php 
-├── 2019_03_01_053718_create_aggregate_logs.php
-└── 2019_03_03_104020_create_access_logs_table.php
+├── 2019_03_01_053718_create_aggregate_logs.php //課題４にて新規追加
+└── 2019_03_03_104020_create_access_logs_table.php //課題４にて新規追加
 
 views
 ├── error.blade.php
 ├── home.blade.php
 ├── login.blade.php
-├── management.blade.php
+├── management.blade.php //課題４にて新規追加
 └── welcome.blade.php
 
 logs
