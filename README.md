@@ -105,10 +105,11 @@ logs
 
 ####Laravel環境の構築
 1. composerアップデート `composer update`
-2. アプリケーションキーの設定 `php artisan key:generate`
-3. .env.exampleファイルをコピーする
+
+2. .env.exampleファイルをコピーする
     `$cp .env.example .env`
-4. envファイルを書き換える  
+3. envファイルを書き換える  
+
  ```  
 APP_NAME=Laravel
 APP_ENV=local
@@ -153,6 +154,9 @@ MIX_PUSHER_APP_KEY="${PUSHER_APP_KEY}"
 MIX_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
 
 ```
+
+4. アプリケーションキーの設定 `php artisan key:generate`  
+
 ####APIキー設定  
 .envファイルに以下を追記してください
 ```
