@@ -25,6 +25,10 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/home', function () {
         return view('home');
     });
+    //ログ集計データ初期画面
+    Route::get('/management', 'ManagementController@index')->name('management.index');
+    //ログ集計データ日付検索
+    Route::get('/management/find', 'ManagementController@findAggregateLog')->name('management.find');
 });
 
 //エラー画面
