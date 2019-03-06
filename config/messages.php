@@ -14,5 +14,7 @@ return [
     'batchError' => '定期ジョブ失敗',
     'batchStart' => '定期ジョブ開始',
     'batchFinish' => '定期ジョブ完了',
+    'batchFileNotFound' => 'ログファイルがありませんでした',
+    'batchFileEmpty' => 'ファイル内にデータがありませんでした'
 
 ];
