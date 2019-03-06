@@ -32,6 +32,15 @@
                 <table border="1">
                     <tr>
                         <th>
+                            HTTPステータスコード
+                        </th>
+                        <th>
+                            HTTPメソッド名
+                        </th>
+                        <th>
+                            APIエンドポイント
+                        </th>
+                        <th>
                             処理平均時間
                         </th>
                         <th>
@@ -44,6 +53,15 @@
                     @if(!empty($aggregateLogs))
                         @foreach($aggregateLogs as $aggregateLog)
                             <tr>
+                                <td>
+                                    {{ $aggregateLog->status_code }}
+                                </td>
+                                <td>
+                                    {{ $aggregateLog->method }}
+                                </td>
+                                <td>
+                                    {{ $aggregateLog->api_uri }}
+                                </td>
                                 <td>
                                     {{ $aggregateLog->ave_execution_time }}
                                 </td>

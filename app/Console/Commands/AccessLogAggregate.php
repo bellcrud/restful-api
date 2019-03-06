@@ -49,37 +49,49 @@ class AccessLogAggregate extends Command
             //ファイル名取得
             $filename = config('values.apiLogFileName') . Carbon::now()->subDay()->format('Y-m-d') . config('values.logsExtension');
 
+            //ファイル保存先パスを取得
             $filePath = storage_path(config('values.apiLogFile')) . $filename;
-            //ログファイルが取得できなかった場合例外を投げる
+
+            //ファイルを取得
             $logFile = file_get_contents($filePath);
+
+            //ファイルを取得できなかった場合ログ出力し、処理をここで終了する
+            if (!$logFile) {
+                Log::channel('batchLog')->info(config('messages.batchFileNotFound'));
+                exit;
+            }
+
+            //ファイル内にデータがなかった場合ログ出力し、処理をここで終了する
             $logFile = explode("\n", $logFile);
+            if (empty($logFile)) {
+                Log::channel('batchLog')->info(config('messages.batchFileEmpty'));
+                exit;
+            }
 
-            //リクエストの処理にかかった時間の平均値とアクセス回数の変数初期化
-            $ave_execution_time = 0;
-            $accessTimes = 0;
-
-            //リクエストの処理にかかった時間の合計値とアクセス回数合計値取得とaccess_logテーブルにデータ登録
+            //access_logテーブルにデータ登録
             foreach ($logFile as $log) {
                 //ログファイル最終行に空行が存在するため、空行では何もしない
                 if ($log !== '') {
+                    //空白行で文字列を切り分け、配列に変換
                     $log = explode(' ', $log);
                     AccessLog::storeLog($log);
-                    $ave_execution_time += $log[6];
-                    ++$accessTimes;
                 }
             }
 
-            //リクエストの処理にかかった時間の平均値計算
-            $ave_execution_time = $ave_execution_time / $accessTimes;
-            //aggregate_logsテーブルにデータ登録
-            AggregateLog::storeAggregateLog($ave_execution_time, $accessTimes);
+            //集計データ各API × HTTPステータスコードのアクセス数と平均処理時間のデータを取得
+            $yesterdayLogs = AccessLog::aggregateYesterdayLog();
+
+            //集計データを登録
+            foreach ($yesterdayLogs as $yesterdayLog) {
+                AggregateLog::storeAggregateLog((array)$yesterdayLog);
+            }
 
         } catch (Exception $exception) {
 
             //定期ジョブ実行失敗時ログ出力
             Log::channel('batchLog')->warning(config('messages.batchError'));
             //例外をhandlerにスロー
-            throw new Exception($exception);
+            exit;
 
         }
 

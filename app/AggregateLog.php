@@ -11,28 +11,27 @@ class AggregateLog extends Model
     /**
      * @var array
      */
-    protected $fillable = ['ave_execution_time', 'total_access_count'];
+    protected $fillable = ['api_uri', 'ave_execution_time', 'total_access_count', 'status_code', 'method'];
 
     /**
      * aggregate_logsテーブル全件検索
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public static function findAll(){
-        //return AggregateLog::paginate(1);
+    public static function findAll()
+    {
         return DB::table('aggregate_logs')->paginate(10);
     }
+
 
     /**
      * aggregate_logsテーブルに登録する
      * 1日のログの平均処理時間とアクセス数を計算した数値を登録する
-     * @param $ave_execution_time
-     * @param $accessTimes
-     * @throws \Throwable
+     * @param $yesterdayLog
      */
-    public static function storeAggregateLog($ave_execution_time, $accessTimes)
+    public static function storeAggregateLog($yesterdayLog)
     {
-        DB::transaction(function () use ($ave_execution_time, $accessTimes) {
-            AggregateLog::create(['ave_execution_time' => $ave_execution_time, 'total_access_count' => $accessTimes]);
+        DB::transaction(function () use ($yesterdayLog) {
+            AggregateLog::create(['api_uri' => $yesterdayLog['end_point'], 'ave_execution_time' => $yesterdayLog['ave_execution_time'], 'total_access_count' => $yesterdayLog['access_count'], 'status_code' => $yesterdayLog['status_code'], 'method' => $yesterdayLog['method']]);
         });
     }
 

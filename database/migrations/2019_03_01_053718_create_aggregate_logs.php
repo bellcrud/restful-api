@@ -15,6 +15,9 @@ class CreateAggregateLogs extends Migration
     {
         Schema::create('aggregate_logs', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('status_code')->comment('ステータスコード');
+            $table->string('method', 100)->comment('HTTPメソッド');
+            $table->string('api_uri', 100)->comment('APIのエンドポイント');
             $table->double('ave_execution_time',10,5)->comment('平均処理時間');
             $table->unsignedInteger('total_access_count')->comment('総アクセス数');
             $table->timestamps();

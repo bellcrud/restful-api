@@ -15,7 +15,7 @@ class CreateAccessLogsTable extends Migration
     {
         Schema::create('access_logs', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('method')->comment('HTTPメソッド名');
+            $table->string('method',6)->comment('HTTPメソッド名');
             $table->double('execution_time',10,5)->comment('処理時間');
             $table->integer('status_code')->comment('HTTPステータスコード');
             $table->string('end_point')->comment('APIエンドポイント');
