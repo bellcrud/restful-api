@@ -25,6 +25,20 @@ APIへのアクセス情報を任意の形式でログファイルへ出力す�
 - 一日一回APIアクセスログを集計し、DBに格納
 - 実行時間：毎日深夜１２時に実行
 
+####バッチ実行
+- バッチ手動実行時コマンド: `php artisan command:aggregate`
+- バッチ実行ファイル: okura-restful-api/app/Console/Commands/AccessLogAggregate.php  
+
+####ログ
+- APIアクセスログ
+   - ファイルパス: restful_api/storage/logs/api
+   - ファイル名: access-yyyy-mm-dd.log
+   - ログ表示データ例: [2019-03-06 07:27:29] local.INFO: GET /api/v1/items/ 200 0.12501692771912 
+- バッチ処理ログ
+   - ファイルパス: okura-restful-api/storage/logs/batch/
+   - ファイル名: batch.log
+   - ログ表示データ例: [2019-03-04 06:55:30] local.INFO: 定期ジョブ開始 
+
 ####ディレクト構成
 ```
 //Controller・Exception・Middleware
@@ -159,11 +173,13 @@ MIX_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
 
 ####APIキー設定  
 .envファイルに以下を追記してください
+
 ```
 GITHUB_CLIENT_ID=***********
 GITHUB_CLIENT_SECRET=**********
 「**********」にはGitHubアプリケーションの登録後に提供された値を記述してください
 ```
+
 GitHubのAPIキー作成取得方法は以下のサイトを参照してください
 (作成方法)[https://yurakawa.hatenablog.jp/entry/2018/06/04/002033]  
 作成する際に必要な項目には以下の値を入力してください  
@@ -212,7 +228,7 @@ restful_api/storage/logs/api
 /Users/okurashoichi/PhpstormProjects/restful_api/storage/logs/batch
 
 7. 手動でジョブを実行する場合は下記のコマンドを入力してください。
-`php artisan command:aggregate`  
+`php artisan command:aggregate`   
 **＊　初回実行時は集計するログファイルが無いため手動で 5 で記載したパスにログファイルを作成する必要があります。**  
 ファイルはAPIにアクセス後「access-2019-03-05」(日付部分は実行日)のファイルが作成されるため、実行した前日の日付にファイル名を変更して  
 からジョブコマンドを実行してください。  
