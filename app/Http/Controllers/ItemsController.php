@@ -61,7 +61,7 @@ class ItemsController extends Controller
     {
         $params = $request->all();
         $params = $this->imageDecode($params);
-        $validator = \Validator::make($params, [
+        $validator = Validater::make($params, [
             'name' => 'max:100|required',
             'description' => 'max:500|required',
             'price' => 'digits_between:1,9|required',
@@ -94,7 +94,7 @@ class ItemsController extends Controller
     {
         //idに格納されている値がintegerか確認
         $input = ['id' => $id];
-        $rule = ['id' => 'integer'];
+        $rule = ['id' => 'numeric'];
         $validator = \Validator::make($input, $rule);
         if ($validator->fails()) {
             abort(StatusCode::HTTP_NOT_FOUND);
@@ -126,10 +126,10 @@ class ItemsController extends Controller
     {
         //idのバリデーションチェック
         $input = ['id' => $id];
-        $rule = ['id' => 'integer'];
+        $rule = ['id' => 'numeric'];
         $validator = \Validator::make($input, $rule);
         if ($validator->fails()) {
-            abort(StatusCode::HTTP_MISDIRECTED_REQUEST);
+            abort(StatusCode::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         //対象データがあれば更新する
@@ -185,10 +185,10 @@ class ItemsController extends Controller
     {
         //idのバリデーション チェック
         $input = ['id' => $id];
-        $rule = ['id' => 'integer'];
+        $rule = ['id' => 'numeric'];
         $validator = \Validator::make($input, $rule);
         if ($validator->fails()) {
-            abort(StatusCode::HTTP_MISDIRECTED_REQUEST);
+            abort(StatusCode::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         //対象データの存在確認
