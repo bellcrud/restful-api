@@ -6,7 +6,6 @@ use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Auth\AuthenticationException;
-use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class Handler extends ExceptionHandler
@@ -122,10 +121,8 @@ class Handler extends ExceptionHandler
         if ($exception instanceof AuthenticationException) {
             //ログインしていない場合はログイン画面にリダイレクトする
             $exception = new HttpException(401, 'ログインをしてからアクセスしてください');
-        } elseif ($exception instanceof ValidationException) {
-            //バリデーションエラーの場合はerror画面にリダイレクトする。
-            $exception->redirectTo('error');
         }
+
         return $exception;
     }
 

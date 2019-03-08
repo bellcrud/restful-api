@@ -1,4 +1,9 @@
 <div>
+    @if (!empty($errors))
+        @foreach( $errors->all() as $message )
+            <div>{{ $message }}</div>
+        @endforeach
+    @endif
     <div>
         @if (session('errorMessage'))
             <div>

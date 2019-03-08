@@ -28,7 +28,12 @@
             {!! Form::date('dayEnd',$dayEnd) !!}
             {!! Form::submit('検索',['class'=> 'btn btn-default btn-md'])!!}
             {!! Form::close() !!}
-            <div style="margin-left: 350px;">
+            @if (!empty($errors))
+                @foreach( $errors->all() as $message )
+                    <li style="color: red; margin: 10px;">{{ $message }}</li>
+                @endforeach
+            @endif
+            <div style="">
                 <table border="1">
                     <tr>
                         <th>
