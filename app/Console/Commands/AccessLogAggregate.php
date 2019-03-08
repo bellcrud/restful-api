@@ -89,7 +89,7 @@ class AccessLogAggregate extends Command
         } catch (Exception $exception) {
 
             //定期ジョブ実行失敗時ログ出力
-            Log::channel('batchLog')->warning(config('messages.batchError'));
+            Log::channel('batchLog')->warning(config('messages.batchError').config('messages.batchErrorMessage').$exception->getMessage().config('messages.batchErrorFile').$exception->getFile().config('batchErrorLine').$exception->getLine());
             exit;
 
         }
