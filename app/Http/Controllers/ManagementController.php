@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use App\AggregateLog;
 use Illuminate\Http\Request;
+use Validator;
 
 class ManagementController extends Controller
 {
@@ -27,7 +28,16 @@ class ManagementController extends Controller
      */
     public static function findAggregateLog(Request $request)
     {
-        $aggregateLogs = AggregateLog::findAggregateLog($request->dayStart, $request->dayEnd);
+        $param = $request->all();
+
+        Validator::make($param, [
+            'dayStart' => 'nullable|required_with:dayEnd|date|date_format:Y-m-d',
+            'dayEnd' => 'nullable|required_with:dayStart|date|after:dayStart|date_format:Y-m-d',
+        ])->validate();;
+
+
+
+        $aggregateLogs = AggregateLog::findAggregateLog($param['dayStart'], $param['dayEnd']);
 
         return view('/management', ['aggregateLogs' => $aggregateLogs, 'dayStart' => $request->dayStart, 'dayEnd' => $request->dayEnd,]);
     }

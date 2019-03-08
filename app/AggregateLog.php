@@ -50,8 +50,8 @@ class AggregateLog extends Model
         }
         if (!empty($dayEnd)) {
             $dayEnd = new Carbon($dayEnd);
-            //入力値の時刻が'00:00:00'になるため検索時に入力値と同日に作成された日は検索にヒットしないため、1日追加する。
-            $dayEnd = $dayEnd->addDay();
+            //入力値の時刻が'00:00:00'になるため検索時に入力値と同日に作成された日は検索にヒットしないため、時間を1日の最終時刻にする
+            $dayEnd = $dayEnd->setTime(23, 59, 59);
         }
 
         return DB::table('aggregate_logs')->whereBetween('created_at', [$dayStart, $dayEnd])->paginate(10);

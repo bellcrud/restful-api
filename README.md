@@ -29,6 +29,18 @@ APIへのアクセス情報を任意の形式でログファイルへ出力す�
 - バッチ手動実行時コマンド: `php artisan command:aggregate`
 - バッチ実行ファイル: okura-restful-api/app/Console/Commands/AccessLogAggregate.php  
 
+####crontab設定
+下記のコマンドを実行し、設定してください。  
+*path-to-your-projectにはプロジェクトのパスを記述してください
+
+```
+crontab -e
+```
+```
+* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+
+```
+
 ####ログ
 - APIアクセスログ
    - ファイルパス: restful_api/storage/logs/api

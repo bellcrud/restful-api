@@ -73,7 +73,7 @@ return [
 		],
         //バッチ用ログ出力
         'batchLog' => [
-            'driver' => 'single',
+            'driver' => 'daily',
             'path'   => storage_path('logs/batch/batch.log'),
             'level'  => 'debug',
         ],

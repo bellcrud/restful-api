@@ -90,7 +90,6 @@ class AccessLogAggregate extends Command
 
             //定期ジョブ実行失敗時ログ出力
             Log::channel('batchLog')->warning(config('messages.batchError'));
-            //例外をhandlerにスロー
             exit;
 
         }
