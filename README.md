@@ -37,8 +37,7 @@ APIへのアクセス情報を任意の形式でログファイルへ出力す�
 crontab -e
 ```
 ```
-* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
-
+php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
 ```
 
 ####ログ
