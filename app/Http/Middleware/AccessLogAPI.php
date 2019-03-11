@@ -49,6 +49,6 @@ class AccessLogAPI
         //ログ出力
         Log::channel('accessLog')->info($logMessage);
 
-        return $next($request);
+        return $response;
     }
 }
