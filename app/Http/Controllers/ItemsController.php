@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Item;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response as StatusCode;//追加
 use Illuminate\Contracts\Validation\Validator;  // 追加
-use Storage; //追加
+use Illuminate\Support\Facades\Validator as Validate;
+
 
 use Illuminate\Support\Facades\Log;//追加 エラー時ログ出力
 
@@ -61,7 +63,7 @@ class ItemsController extends Controller
     {
         $params = $request->all();
         $params = $this->imageDecode($params);
-        $validator = \Validator::make($params, [
+        $validator = Validate::make($params, [
             'name' => 'max:100|required',
             'description' => 'max:500|required',
             'price' => 'digits_between:1,9|required',
@@ -94,8 +96,8 @@ class ItemsController extends Controller
     {
         //idに格納されている値がintegerか確認
         $input = ['id' => $id];
-        $rule = ['id' => 'integer'];
-        $validator = \Validator::make($input, $rule);
+        $rule = ['id' => 'numeric'];
+        $validator = Validate::make($input, $rule);
         if ($validator->fails()) {
             abort(StatusCode::HTTP_NOT_FOUND);
         }
@@ -126,10 +128,10 @@ class ItemsController extends Controller
     {
         //idのバリデーションチェック
         $input = ['id' => $id];
-        $rule = ['id' => 'integer'];
-        $validator = \Validator::make($input, $rule);
+        $rule = ['id' => 'numeric'];
+        $validator = Validate::make($input, $rule);
         if ($validator->fails()) {
-            abort(StatusCode::HTTP_MISDIRECTED_REQUEST);
+            abort(StatusCode::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         //対象データがあれば更新する
@@ -137,7 +139,7 @@ class ItemsController extends Controller
         if ($item) {
             $params = $request->all();
             $params = self::imageDecode($params);
-            $validator = \Validator::make($params, [
+            $validator = Validate::make($params, [
                 'name' => 'max:100',
                 'description' => 'max:500',
                 'price' => 'digits_between:1,9',
@@ -185,10 +187,10 @@ class ItemsController extends Controller
     {
         //idのバリデーション チェック
         $input = ['id' => $id];
-        $rule = ['id' => 'integer'];
-        $validator = \Validator::make($input, $rule);
+        $rule = ['id' => 'numeric'];
+        $validator = Validate::make($input, $rule);
         if ($validator->fails()) {
-            abort(StatusCode::HTTP_MISDIRECTED_REQUEST);
+            abort(StatusCode::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         //対象データの存在確認

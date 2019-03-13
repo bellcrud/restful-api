@@ -14,9 +14,11 @@
 <div class="container">
     <div class="center jumbotron">
         <div class="text-center">
-
             <div>
                 <a href="/logout" class="btn btn-default btn-md">Log out</a>
+            </div>
+            <div>
+                <a href="/management" class="btn btn-default btn-md">Aggregate</a>
             </div>
             <div><h3>プロフィール</h3></div>
             <div>
