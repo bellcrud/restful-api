@@ -64,9 +64,9 @@ class ItemsController extends Controller
         $params = $request->all();
         $params = $this->imageDecode($params);
         $validator = Validate::make($params, [
-            'name' => 'max:100|required',
-            'description' => 'max:500|required',
-            'price' => 'digits_between:1,9|required',
+            'name' => 'required|max:100',
+            'description' => 'required|max:500',
+            'price' => 'required|digits_between:1,9',
             'image' => 'required|base64',
         ]);
 
