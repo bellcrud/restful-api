@@ -244,7 +244,7 @@ class ItemsController extends Controller
                 $messages = "キーワードに当てはまるアイテムがありませんでした。";
 
                 return response()->json(
-                    ['messages' => $messages],
+                    ['message' => $messages],
                     StatusCode::HTTP_OK,
                     [],
                     JSON_UNESCAPED_UNICODE
@@ -254,7 +254,7 @@ class ItemsController extends Controller
             $messages = "キーワードに当てはまるアイテムがありませんでした。";
 
             return response()->json(
-                ['messages' => $messages],
+                ['message' => $messages],
                 StatusCode::HTTP_OK,
                 [],
                 JSON_UNESCAPED_UNICODE
