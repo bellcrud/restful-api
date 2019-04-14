@@ -298,7 +298,7 @@ class ItemsController extends Controller
         $disk->put($storeFile, $image);
 
         //ブラウザで確認する用のURLに変更
-        $storeFile = '/storage/' . $storeFile;
+        $storeFile = 'http://localhost:8000/storage/' . $storeFile;
         return $storeFile;
     }
 
@@ -312,7 +312,7 @@ class ItemsController extends Controller
         $disk = Storage::disk('public');
 
         //ファイルパスを修正
-        $fileName = str_replace('/storage/', '', $fileName);
+        $fileName = str_replace('http://localhost:8000/storage/', '', $fileName);
         $disk->delete($fileName);
     }
 
