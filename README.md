@@ -17,7 +17,7 @@
 - Socialite
 - postman
 - swagger
-- CORS フロントエンド課題1にて追加
+- CORS フロントエンド課題にて追加
 
 ##全体の設計・構成
 
