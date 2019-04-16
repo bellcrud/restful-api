@@ -136,6 +136,7 @@ logs
 3. envファイルを書き換える  
 
  ```  
+ 
 APP_NAME=Laravel
 APP_ENV=local
 APP_KEY=base64:wENUj/GLeKiwtpL99bewMSdR7eGcXS0Iif2QCpfnsz0=
@@ -176,7 +177,8 @@ IMAGE_DIRECTORY=storage
 
 LOG_CHANNEL=stack
 MIX_PUSHER_APP_KEY="${PUSHER_APP_KEY}"
-MIX_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
+MIX_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}" 
+
 
 ```
 
@@ -186,9 +188,11 @@ MIX_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
 .envファイルに以下を追記してください
 
 ```
+
 GITHUB_CLIENT_ID=***********
 GITHUB_CLIENT_SECRET=**********
-「**********」にはGitHubアプリケーションの登録後に提供された値を記述してください
+「**********」にはGitHubアプリケーションの登録後に提供された値を記述してください 
+
 ```
 
 GitHubのAPIキー作成取得方法は以下のサイトを参照してください
