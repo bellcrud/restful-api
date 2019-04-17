@@ -133,6 +133,7 @@ logs
 
 2. .env.exampleファイルをコピーする
     `$cp .env.example .env`
+    
 3. envファイルを書き換える  
 
  ```  
@@ -179,8 +180,9 @@ LOG_CHANNEL=stack
 MIX_PUSHER_APP_KEY="${PUSHER_APP_KEY}"
 MIX_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}" 
 
+REACT_APP_HOST_NAME=http://localhost:3000/  
 
-```
+```  
 
 4. アプリケーションキーの設定 `php artisan key:generate`  
 
