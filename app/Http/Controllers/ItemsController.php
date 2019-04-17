@@ -298,7 +298,7 @@ class ItemsController extends Controller
         $disk->put($storeFile, $image);
 
         //ブラウザで確認する用のURLに変更
-        $storeFile = env('REACT_APP_HOST_NAME') . '/storage/' . $storeFile;
+        $storeFile = env('APP_URL_PORT') . '/storage/' . $storeFile;
         return $storeFile;
     }
 
@@ -312,7 +312,7 @@ class ItemsController extends Controller
         $disk = Storage::disk('public');
 
         //ファイルパスを修正
-        $fileName = str_replace(env('REACT_APP_HOST_NAME') . '/storage/', '', $fileName);
+        $fileName = str_replace(env('APP_URL_PORT') . '/storage/', '', $fileName);
         $disk->delete($fileName);
     }
 
