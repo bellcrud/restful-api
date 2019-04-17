@@ -136,11 +136,10 @@ logs
     
 3. envファイルを書き換える  
 
- ```  
- 
-APP_NAME=Laravel
-APP_ENV=local
-APP_KEY=base64:wENUj/GLeKiwtpL99bewMSdR7eGcXS0Iif2QCpfnsz0=
+ ```
+APP_NAME=Laravel  
+APP_ENV=local  
+APP_KEY=base64:wENUj/GLeKiwtpL99bewMSdR7eGcXS0Iif2QCpfnsz0=  
 APP_DEBUG=true
 APP_URL=http://localhost
 
@@ -188,6 +187,7 @@ REACT_APP_HOST_NAME=http://localhost:3000/
 
 ####APIキー設定  
 .envファイルに以下を追記してください
+
 
 ```
 
