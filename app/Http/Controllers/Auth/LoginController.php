@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -18,7 +19,16 @@ class LoginController extends Controller
     |
     */
 
-    use AuthenticatesUsers;
+    /**
+     * Laravel側ログアウトメソッドを呼び出し名を変更
+     *
+     * 処理を新たに追加したlogoutをログアウト時に呼びだす際
+     * デフォルトのメソッドを実行する際に呼びだす際にメソッド名が被るのを
+     * 回避するため変更
+     */
+    use AuthenticatesUsers{
+        logout as performLogout;
+    }
 
     /**
      * Where to redirect users after login.
@@ -38,8 +48,15 @@ class LoginController extends Controller
     }
 
 
+    /**
+     * ログアウト時クライアント側Cookieを削除
+     * Laravelデフォルトのメソッドも合わせて実行する。
+     */
+    public function logout(Request $request)
+    {
+        $this->performLogout($request);
+        setcookie('TOKEN');
 
-
-
-
+        return redirect('/');
+    }
 }
