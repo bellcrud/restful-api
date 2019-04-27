@@ -1,7 +1,6 @@
-#課題4 定期ジョブ機能
+#フロントエンド課題1「Reactを使ったSPAの作成」
 ##概要
-APIへのアクセス情報を任意の形式でログファイルへ出力する処理を追加し、  
-1日1度起動するバッチ処理で、ログファイルから以下の情報を集計した結果をDBに保存する
+サーバサイド課題で作成したAPIを利用して、商品の作成、検索、更新、削除を行うSPAをReactで実装する。
 
 ##使用した技術
 
@@ -18,6 +17,7 @@ APIへのアクセス情報を任意の形式でログファイルへ出力す�
 - Socialite
 - postman
 - swagger
+- CORS フロントエンド課題にて追加
 
 ##全体の設計・構成
 
@@ -25,11 +25,11 @@ APIへのアクセス情報を任意の形式でログファイルへ出力す�
 - 一日一回APIアクセスログを集計し、DBに格納
 - 実行時間：毎日深夜１２時に実行
 
-####バッチ実行
+####バッチ実行　※特にフロントエンド課題では実行することはありません
 - バッチ手動実行時コマンド: `php artisan command:aggregate`
 - バッチ実行ファイル: okura-restful-api/app/Console/Commands/AccessLogAggregate.php  
 
-####crontab設定
+####crontab設定　※特にフロントエンド課題では実行することはありません
 下記のコマンドを実行し、設定してください。  
 *path-to-your-projectにはプロジェクトのパスを記述してください
 
@@ -40,7 +40,7 @@ crontab -e
 php /path-to-your-project/artisan schedule:run >> /dev/null 2>&1
 ```
 
-####ログ
+####ログ　※特にフロントエンド課題では確認することはありません
 - APIアクセスログ
    - ファイルパス: restful_api/storage/logs/api
    - ファイル名: access-yyyy-mm-dd.log
@@ -133,12 +133,13 @@ logs
 
 2. .env.exampleファイルをコピーする
     `$cp .env.example .env`
+    
 3. envファイルを書き換える  
 
- ```  
-APP_NAME=Laravel
-APP_ENV=local
-APP_KEY=base64:wENUj/GLeKiwtpL99bewMSdR7eGcXS0Iif2QCpfnsz0=
+ ```
+APP_NAME=Laravel  
+APP_ENV=local  
+APP_KEY=base64:wENUj/GLeKiwtpL99bewMSdR7eGcXS0Iif2QCpfnsz0=  
 APP_DEBUG=true
 APP_URL=http://localhost
 
@@ -176,19 +177,25 @@ IMAGE_DIRECTORY=storage
 
 LOG_CHANNEL=stack
 MIX_PUSHER_APP_KEY="${PUSHER_APP_KEY}"
-MIX_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
+MIX_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}" 
 
-```
+REACT_APP_HOST_NAME=http://localhost:3000/  
+APP_URL_PORT=http://localhost:8000
+
+```  
 
 4. アプリケーションキーの設定 `php artisan key:generate`  
 
 ####APIキー設定  
 .envファイルに以下を追記してください
 
+
 ```
+
 GITHUB_CLIENT_ID=***********
 GITHUB_CLIENT_SECRET=**********
-「**********」にはGitHubアプリケーションの登録後に提供された値を記述してください
+「**********」にはGitHubアプリケーションの登録後に提供された値を記述してください 
+
 ```
 
 GitHubのAPIキー作成取得方法は以下のサイトを参照してください
@@ -232,14 +239,4 @@ DB名 : restful_api
 テーブル名 : tokens
 カラム名 : token
 
-5. APIにアクセスすると下記パスにログが出力されます。
-restful_api/storage/logs/api
-
-6. 定期ジョブが実行されると下記パスにログが出力されます。
-/Users/okurashoichi/PhpstormProjects/restful_api/storage/logs/batch
-
-7. 手動でジョブを実行する場合は下記のコマンドを入力してください。
-`php artisan command:aggregate`   
-**＊　初回実行時は集計するログファイルが無いため手動で 5 で記載したパスにログファイルを作成する必要があります。**  
-ファイルはAPIにアクセス後「access-2019-03-05」(日付部分は実行日)のファイルが作成されるため、実行した前日の日付にファイル名を変更して  
-からジョブコマンドを実行してください。  
+5. ログイン画面が立ち上がりますので、こちらをログインしてください。

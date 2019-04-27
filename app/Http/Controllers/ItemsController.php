@@ -64,9 +64,9 @@ class ItemsController extends Controller
         $params = $request->all();
         $params = $this->imageDecode($params);
         $validator = Validate::make($params, [
-            'name' => 'max:100|required',
-            'description' => 'max:500|required',
-            'price' => 'digits_between:1,9|required',
+            'name' => 'required|max:100',
+            'description' => 'required|max:500',
+            'price' => 'required|digits_between:1,9',
             'image' => 'required|base64',
         ]);
 
@@ -244,7 +244,7 @@ class ItemsController extends Controller
                 $messages = "キーワードに当てはまるアイテムがありませんでした。";
 
                 return response()->json(
-                    ['messages' => $messages],
+                    ['message' => $messages],
                     StatusCode::HTTP_OK,
                     [],
                     JSON_UNESCAPED_UNICODE
@@ -254,7 +254,7 @@ class ItemsController extends Controller
             $messages = "キーワードに当てはまるアイテムがありませんでした。";
 
             return response()->json(
-                ['messages' => $messages],
+                ['message' => $messages],
                 StatusCode::HTTP_OK,
                 [],
                 JSON_UNESCAPED_UNICODE
@@ -298,7 +298,7 @@ class ItemsController extends Controller
         $disk->put($storeFile, $image);
 
         //ブラウザで確認する用のURLに変更
-        $storeFile = '/storage/' . $storeFile;
+        $storeFile = env('APP_URL_PORT') . '/storage/' . $storeFile;
         return $storeFile;
     }
 
@@ -312,7 +312,7 @@ class ItemsController extends Controller
         $disk = Storage::disk('public');
 
         //ファイルパスを修正
-        $fileName = str_replace('/storage/', '', $fileName);
+        $fileName = str_replace(env('APP_URL_PORT') . '/storage/', '', $fileName);
         $disk->delete($fileName);
     }
 

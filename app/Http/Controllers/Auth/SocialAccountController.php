@@ -11,6 +11,7 @@ use Laravel\Socialite\Facades\Socialite;
 use App\SocialAccountService;
 use Validator;
 use Exception;
+use Cookie;
 
 
 class SocialAccountController extends Controller
@@ -72,7 +73,12 @@ class SocialAccountController extends Controller
         //セッションに取得データ格納
         session(['userGitHubInfo' => $user->user, 'token' => $token->token]);
 
-        return redirect('/home');
+        //Cokkieにトークンを設定
+        $cookie = Cookie::make('TOKEN', $token->token, config('cookie.tokenDeadline'), null, null, null, false);
+        Cookie::queue($cookie);
+
+        //SPAにリダイレクト
+        return redirect(env('REACT_APP_HOST_NAME'));
 
     }
 }

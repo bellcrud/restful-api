@@ -16,4 +16,4 @@ php artisan ide-helper:eloquent
 php artisan key:generate
 php artisan migrate
 
-php artisan serve
+php artisan serve --host=localhost

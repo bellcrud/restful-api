@@ -86,8 +86,12 @@ class Handler extends ExceptionHandler
         $errors = [
             'code' => $this->isHttpException($exception) ? $exception->getStatusCode() : 500,
             'message' => $this->getStatusCodeMessage($this->isHttpException($exception) ? $exception->getStatusCode() : 500),
-            'details' => $exception->getMessage(),
         ];
+
+        //exceptionがHttpExceptionかつバリデーションエラーの場合errors配列にdetails要素を追加
+        if ($exception instanceof HttpException && $exception->getStatusCode() === 422) {
+            $errors['details'] = $exception->getHeaders();
+        }
 
         return response()->json(
             ['errors' => $errors],
