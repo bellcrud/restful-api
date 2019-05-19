@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\Domain\Base64Validation;
+use App\domain\Base64Validation;
 
 class ValidatorServiceProvider extends ServiceProvider
 {
