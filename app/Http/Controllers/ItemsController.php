@@ -194,7 +194,6 @@ class ItemsController extends Controller
         }
 
         //対象データの存在確認
-
         $item = Item::find($id);
         if ($item) {
             self::imageDelete($item->getAttribute('image'));
@@ -278,27 +277,17 @@ class ItemsController extends Controller
      */
     public function imageUpload($image)
     {
-        /**
-         * ファイルの保存の準備
-         */
-        //保存先の指定処理
-        $disk = Storage::disk('public');
-        $storeDir = config('filesystems.image');
-
         // 保存ファイル用変数を初期化
         $storeFile = null;
         // MIMETYPEを取得
         $mime_type = finfo_buffer(finfo_open(), $image, FILEINFO_MIME_TYPE);
-
+        // ファイル名を作成
         $storeFilename = strcmp($mime_type, 'image/png') == 0 ? uniqid() . '_image.png' : uniqid() . '_image.jpg';
-        $storeFile = sprintf('%s/%s', $storeDir, $storeFilename);
+        // ファイルを保存
+        Storage::disk('s3')->put($storeFilename, $image, 'public');
+        // ファイルのパスを取得
+        $storeFile = Storage::disk('s3')->url($storeFilename);
 
-
-        //保存データのアップロード
-        $disk->put($storeFile, $image);
-
-        //ブラウザで確認する用のURLに変更
-        $storeFile = env('APP_URL_PORT') . '/storage/' . $storeFile;
         return $storeFile;
     }
 
@@ -309,10 +298,11 @@ class ItemsController extends Controller
      */
     public function imageDelete($fileName)
     {
-        $disk = Storage::disk('public');
+        $disk = Storage::disk('s3');
+
 
         //ファイルパスを修正
-        $fileName = str_replace(env('APP_URL_PORT') . '/storage/', '', $fileName);
+        $fileName = str_replace(env('S3_URL'), '', $fileName);
         $disk->delete($fileName);
     }
 
