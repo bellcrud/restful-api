@@ -49,13 +49,11 @@ class LoginController extends Controller
 
 
     /**
-     * ログアウト時クライアント側Cookieを削除
      * Laravelデフォルトのメソッドも合わせて実行する。
      */
     public function logout(Request $request)
     {
         $this->performLogout($request);
-        setcookie('TOKEN');
 
         return redirect('/');
     }
