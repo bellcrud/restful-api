@@ -4,12 +4,15 @@
 基本課題・フロントエンド課題で作成したアプリケーションをAWSのEC2上で動作させる。
 
 ####使用した技術
+- VPC
 - EC2
 - RDS
 - S3
+- CloudFront
+- ELB
 
 ####確認URL
-- http://ec2-13-231-26-227.ap-northeast-1.compute.amazonaws.com/
+- http://okura-elb-1476899064.ap-northeast-1.elb.amazonaws.com/
 
 ####インフラ設計図
 - 下記のパスに保存されております。
