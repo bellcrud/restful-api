@@ -75,6 +75,8 @@ class SocialAccountController extends Controller
 
         //Cokkieにトークンを設定
         $cookie = Cookie::make('TOKEN', $token->token, config('cookie.tokenDeadline'), null, null, null, false);
+        //不要なCookie情報を削除
+        $cookie = $cookie->getName() . '=' . $cookie->getValue().';';
 
         //SPAにリダイレクト
         return redirect(env('REACT_APP_HOST_NAME') . '?' . $cookie);
