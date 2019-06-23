@@ -13,14 +13,14 @@ A BitBucket Builds template for deploying an application revision to AWS CodeDep
 narshiva@amazon.com
 v1.0.0
 """
-  from __future__ import print_function
-  import os
-  import sys
-  import boto3
-  from botocore.exceptions import ClientError
+from __future__ import print_function
+import os
+import sys
+import boto3
+from botocore.exceptions import ClientError
 
-  BUCKET_KEY = os.getenv('APPLICATION_NAME') + '/' + 'app' + \
-  '-bitbucket_builds.zip'
+BUCKET_KEY = os.getenv('APPLICATION_NAME') + '/' + 'app' + \
+'-bitbucket_builds.zip'
 
 def upload_to_s3(artifact):
     """
