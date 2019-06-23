@@ -44,7 +44,7 @@ class SocialAccountController extends Controller
     {
         //ユーザー情報取得
         try {
-            $user = Socialite::with($provider)->user();
+            $user = Socialite::with($provider)->stateless()->user();
         } catch (Exception $e) {
             //handlerに渡らないので、エラーログを出力
             Log::warning($e);
@@ -75,6 +75,8 @@ class SocialAccountController extends Controller
 
         //Cokkieにトークンを設定
         $cookie = Cookie::make('TOKEN', $token->token, config('cookie.tokenDeadline'), null, null, null, false);
+        //不要なCookie情報を削除
+        $cookie = $cookie->getName() . '=' . $cookie->getValue();
 
         //SPAにリダイレクト
         return redirect(env('REACT_APP_HOST_NAME') . '?' . $cookie);
