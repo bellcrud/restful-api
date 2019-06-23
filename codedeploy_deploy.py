@@ -26,24 +26,24 @@ def upload_to_s3(artifact):
     """
     Uploads an artifact to Amazon S3
     """
-      try:
-        client = boto3.client('s3')
-      except ClientError as err:
-        print("Failed to create boto3 client.\n" + str(err))
-        return False
-      try:
-        client.put_object(
-        Body=open(artifact, 'rb'),
-        Bucket=os.getenv('S3_BUCKET'),
-        Key=BUCKET_KEY
-        )
-      except ClientError as err:
-        print("Failed to upload artifact to S3.\n" + str(err))
-        return False
-      except IOError as err:
-        print("Failed to access artifact.zip in this directory.\n" + str(err))
-        return False
-      return True
+    try:
+      client = boto3.client('s3')
+    except ClientError as err:
+      print("Failed to create boto3 client.\n" + str(err))
+      return False
+    try:
+      client.put_object(
+      Body=open(artifact, 'rb'),
+      Bucket=os.getenv('S3_BUCKET'),
+      Key=BUCKET_KEY
+      )
+    except ClientError as err:
+      print("Failed to upload artifact to S3.\n" + str(err))
+      return False
+    except IOError as err:
+      print("Failed to access artifact.zip in this directory.\n" + str(err))
+      return False
+    return True
 
 def main():
   if not upload_to_s3('/tmp/artifact.zip'):
