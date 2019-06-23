@@ -22,6 +22,7 @@ from botocore.exceptions import ClientError
 BUCKET_KEY = os.getenv('APPLICATION_NAME') + '/' + 'app' + \
 '-bitbucket_builds.zip'
 
+
 def upload_to_s3(artifact):
     """
     Uploads an artifact to Amazon S3
