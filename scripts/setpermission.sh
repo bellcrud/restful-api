@@ -1,2 +1,2 @@
 #!/bin/bash
-composer install
+composer.phar install
