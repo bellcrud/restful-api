@@ -1,2 +1,2 @@
 #!/bin/bash
-composer update
+sudo composer install
