@@ -1,4 +1,4 @@
 #!/bin/bash
-sudo chmod -R 777 /var/www/html/
 cd /var/www/html/okura-restful-api
+sudo chmod -R 777 /var/www/html/
 composer update
