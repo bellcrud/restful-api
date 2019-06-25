@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo composer install
+composer install
