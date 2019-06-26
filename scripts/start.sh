@@ -1,2 +1,2 @@
 #!/bin/bash
-/bin/systemctl start httpd.service
+sudo service httpd start
