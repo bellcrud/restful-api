@@ -3,6 +3,8 @@ os: linux
 files:
   - source: /
     destination: /var/www/html/okura-restful-api
+  - source: composer/
+    destination: /usr/local/bin/composer
 permissions:
   - object: /var/www/html/
     owner: ec2-user
@@ -15,7 +17,7 @@ hooks:
       runas: ec2-user
   AfterInstall:
     - location: scripts/prepair.sh
-      runas: root
+      runas: ec2-user
   ApplicationStart:
     - location: scripts/start.sh
       runas: ec2-user
