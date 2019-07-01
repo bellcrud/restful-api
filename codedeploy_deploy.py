@@ -19,7 +19,7 @@ import sys
 import boto3
 from botocore.exceptions import ClientError
 
-BUCKET_KEY = 'okura-app-1a/app-bitbucket_builds.zip'
+BUCKET_KEY = 'app-bitbucket_builds.zip'
 
 
 def upload_to_s3(artifact):
