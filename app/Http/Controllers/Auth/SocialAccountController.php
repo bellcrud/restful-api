@@ -78,6 +78,8 @@ class SocialAccountController extends Controller
         //不要なCookie情報を削除
         $cookie = $cookie->getName() . '=' . $cookie->getValue();
 
+        Log::warning($cookie);
+
         //SPAにリダイレクト
         return redirect(env('REACT_APP_HOST_NAME') . '?' . $cookie);
 
