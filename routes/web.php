@@ -16,7 +16,7 @@ Route::get('login/{provider}/callback', 'Auth\SocialAccountController@handleProv
 Route::get('logout', 'Auth\LoginController@logout');
 
 //ログイン画面
-Route::get('/login', function () {
+Route::get('/loginpage', function () {
     return view('login');
 })->name('login');
 

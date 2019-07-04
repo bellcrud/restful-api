@@ -10,6 +10,6 @@
     @endif
     <hr>
     <p>
-        <a href="/login">TOP</a>
+        <a href="/loginpage">TOP</a>
     </p>
 </div>
