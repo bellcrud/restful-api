@@ -55,6 +55,6 @@ class LoginController extends Controller
     {
         $this->performLogout($request);
 
-        return redirect('/login');
+        return redirect(REACT_APP_HOST_NAME . '/login');
     }
 }
