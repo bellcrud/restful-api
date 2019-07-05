@@ -44,7 +44,7 @@ class SocialAccountController extends Controller
     {
         //ユーザー情報取得
         try {
-            $user = Socialite::with($provider)->user();
+            $user = Socialite::with($provider)->stateless()->user();
         } catch (Exception $e) {
             //handlerに渡らないので、エラーログを出力
             Log::warning($e);
