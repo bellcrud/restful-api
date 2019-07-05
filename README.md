@@ -9,10 +9,10 @@ bitbucketにソースをpushすると自動でec2にデプロイする
 - S3
 - CodeDeploy 
 - CodePipeline
-- ELB
+- CloudFront
 
 ####確認URL
-- http://okura-elb-1476899064.ap-northeast-1.elb.amazonaws.com/
+- http://dhxewfmlpcn2x.cloudfront.net/
 
 ####インフラ設計図
 - 下記のパスに保存されております。
