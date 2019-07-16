@@ -48,7 +48,7 @@ class SocialAccountController extends Controller
         } catch (Exception $e) {
             //handlerに渡らないので、エラーログを出力
             Log::warning($e);
-            return redirect('/')->with('errorMessage', $provider . config('messages.socialCertificationError'));
+            return redirect('/login')->with('errorMessage', $provider . config('messages.socialCertificationError'));
         }
 
         //名前・メールアドレス・プロバイダーID・プロバイダーネームのバリデーションルールを用意

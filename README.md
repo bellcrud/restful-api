@@ -1,18 +1,18 @@
-##インフラ課題2「冗長化構成の設計と構築」
+##インフラ課題3「CIサーバを使った自動デプロイ」
 
 ####概要
-基本課題・フロントエンド課題で作成したアプリケーションをAWSのEC2上で動作させる。
+bitbucketにソースをpushすると自動でec2にデプロイする
+デプロイ時APIサーバにアクセスするとメンテナンスページが表示される
 
 ####使用した技術
-- VPC
-- EC2
-- RDS
+- bitbucket pipelines 
 - S3
+- CodeDeploy 
+- CodePipeline
 - CloudFront
-- ELB
 
 ####確認URL
-- http://okura-elb-1476899064.ap-northeast-1.elb.amazonaws.com/
+- http://dhxewfmlpcn2x.cloudfront.net/
 
 ####インフラ設計図
 - 下記のパスに保存されております。
