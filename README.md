@@ -1,18 +1,18 @@
-##インフラ課題3「CIサーバを使った自動デプロイ」
+##インフラ課題4「独自ドメインとSSL証明書の設定」
 
 ####概要
-bitbucketにソースをpushすると自動でec2にデプロイする
-デプロイ時APIサーバにアクセスするとメンテナンスページが表示される
+https://からはじまる独自ドメインでアクセスする
+http://でアクセスした場合は、https://にリダイレクトされる
+
 
 ####使用した技術
-- bitbucket pipelines 
-- S3
-- CodeDeploy 
-- CodePipeline
+- Route53 
 - CloudFront
+- Certificate Manager
+- ELB
 
 ####確認URL
-- http://dhxewfmlpcn2x.cloudfront.net/
+- https://www.okurashoichi.com/login
 
 ####インフラ設計図
 - 下記のパスに保存されております。
