@@ -14,7 +14,7 @@ ENV COMPOSER_NO_INTERACTION 1
 
 RUN apt-get update && apt-get install -y git
 RUN apt-get install -y zip unzip
-RUN composer update
+RUN composer install
 RUN mkdir /var/www/html/okura-restful-api/storage
 RUN mkdir /var/www/html/okura-restful-api/storage/framework
 RUN mkdir /var/www/html/okura-restful-api/storage/framework/cache /var/www/html/okura-restful-api/storage/framework/sessions /var/www/html/okura-restful-api/storage/framework/views
