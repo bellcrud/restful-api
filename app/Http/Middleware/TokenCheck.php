@@ -21,13 +21,13 @@ class TokenCheck
     {
         //ヘッダーに認証用トークンが含まれているか確認
         if (!$request->header('Authorization')) {
-            throw new TokenException();
+            throw new App\Exceptions\TokenException();
 
             ////トークンがTokensテーブルに存在しかつ有効期限が過ぎていないかチェック
         } elseif (!empty(Token::findByToken($request->header('Authorization'))) && !Token::calculationPastDay(Token::findByToken($request->header('Authorization'))->created_at)) {
             return $next($request);
         } else {
-            throw new TokenException();
+            throw new App\Exceptions\TokenException();
         }
     }
 }
