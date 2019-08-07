@@ -94,3 +94,25 @@ S3_URL=https://okura-image.s3.ap-northeast-1.amazonaws.com/
 5. `php artisan migrate`コマンドを実行する。
 
 6. http://localhost:9000/login にアクセスする。
+
+
+####ECRへのpush手順
+1. AWSコンソール画面にログイン
+
+2. サービス名ECRをクリックし、「リポジトリの作成」を押下、任意のリポジトリ名で登録する。
+
+3. `aws ecr get-login --region ap-northeast-1 --profile ecr --no-include-email`コマンドを実行し、ECRにログインする  
+   ※aws configureコマンドにて、ecr用のプロファイルは作成済みである前提
+
+4. レスポンスにログイン用コマンドがコマンドラインに表示されるので、それをそのまま実行
+
+5. 以下のコマンドを実行し、pushするためのタグを追加する  
+   `docker tag okura-restful-api:latest 720146896923.dkr.ecr.ap-northeast-1.amazonaws.com/okura-restful-api:latest`
+   
+6. 以下のコマンドを実行し、pushする
+   `docker push 720146896923.dkr.ecr.ap-northeast-1.amazonaws.com/okura-restful-api:latest`
+   
+7. pushできているか確認  
+   https://ap-northeast-1.console.aws.amazon.com/ecr/repositories/okura-restful-api/?region=ap-northeast-1
+
+   
