@@ -80,4 +80,17 @@ S3_URL=https://okura-image.s3.ap-northeast-1.amazonaws.com/
 4. Dockerコンテナを起動する
 `docker container run -d -p 9000:80 okura-restful-api:latest`
 
-5. http://localhost:9000 にアクセスする。
+5. http://localhost:9000/login にアクセスする。
+
+####docker composeを利用した起動手順
+1. docker-compose.ymlがあるディレクトリに移動
+
+2. `docker-compose up -d`コマンドを実行
+
+3. `docker ps`コマンドを実行し、okura-restful-api:latestイメージから作成されたコンテナのCONTAINER IDを確認
+
+4. `docker exec -it [3で確認したCONTAINER ID] /bin/bash`コマンドを実行し、コンテナにログイン
+
+5. `php artisan migrate`コマンドを実行する。
+
+6. http://localhost:9000/login にアクセスする。
