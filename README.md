@@ -93,7 +93,7 @@ S3_URL=https://okura-image.s3.ap-northeast-1.amazonaws.com/
 
 5. `php artisan migrate`コマンドを実行する。
 
-6. http://localhost:9000/login にアクセスする。
+6. http://localhost/login にアクセスする。
 
 
 ####ECRへのpush手順
