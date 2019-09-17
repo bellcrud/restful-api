@@ -4,12 +4,16 @@ services:
     image: okura-restful-api:latest
     ports:
       - 80:80
-    environment:
-      TZ: 'Asia/Tokyo'
-#      - "LC_ALL=ja_JP.UTF-8"
+    volumes:
+      - ../okura-restful-api:/var/www/html/okura-restful-api
+      - ./docker/app/httpd.conf:/etc/apache2/httpd.conf
+      - .docker/app/php.ini:/usr/local/lib/php.ini
+    command: >
+      bash -c "cd var/www/html/okura-restful-api/ && composer install && mkdir -p /var/www/html/okura-restful-api/storage/framework/cache /var/www/html/okura-restful-api/storage/framework/sessions /var/www/html/okura-restful-api/storage/framework/views
+      && chmod -R a+w /var/www/html/ && chmod -R a+w /var/www/html/okura-restful-api/storage/framework/ /var/www/html/okura-restful-api/ bootstrap/cache && /usr/sbin/httpd -DFOREGROUND"
+    tty: true
   mysql:
     image: mysql:5.7
-    container_name: db-host
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: restful_api
