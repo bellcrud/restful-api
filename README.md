@@ -74,7 +74,8 @@ S3_URL=https://okura-image.s3.ap-northeast-1.amazonaws.com/
 ※起動の確認のためOAuth認証のログインなどはしないため、 
  GitHubアプリケーションの登録はしない。 
  
-3. クローンしたリポジトリのディレクトリに移動し、docker imageをビルドする
+3. クローンしたリポジトリがあるディレクトリに移動し、docker imageをビルドする  
+    ※クローンしたリポジトリ内ではない  
 `docker build -t okura-restful-api:latest .`
 
 4. Dockerコンテナを起動する
