@@ -1,11 +1,13 @@
 version: "3"
 services:
   php:
-    image: okura-restful-api:latest
+    image: tleokura/alpine-php-apache
     ports:
       - 80:80
     volumes:
       - ../okura-restful-api:/var/www/html/okura-restful-api
+      - ./docker/app/httpd.conf:/etc/apache2/httpd.conf
+      - ./docker/app/php.ini:/usr/local/lib/php.ini
     command: >
       bash -c "cd /var/www/html/okura-restful-api && composer install && mkdir -p /var/www/html/okura-restful-api/storage/framework/cache /var/www/html/okura-restful-api/storage/framework/sessions /var/www/html/okura-restful-api/storage/framework/views
       && chmod -R a+w /var/www/html/ && chmod -R a+w /var/www/html/okura-restful-api/storage/framework/ /var/www/html/okura-restful-api/bootstrap/cache && /usr/sbin/httpd -DFOREGROUND"
