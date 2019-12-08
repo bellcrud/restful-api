@@ -1,0 +1,31 @@
+FROM alpine:3.10
+MAINTAINER Shoichi Okura
+
+# Packages
+RUN apk update && \
+    apk add libressl-dev apache2 apache2-dev openssl wget gcc g++ make ca-certificates libxml2 libxml2-dev curl curl-dev zlib zlib-dev && \
+    update-ca-certificates
+
+
+# Download and build PHP
+RUN cd tmp/ && \
+    wget -O php-7.2.5.tar.gz http://jp2.php.net/get/php-7.2.5.tar.gz/from/this/mirror && \
+    tar xvfz php-7.2.5.tar.gz && \
+    cd php-7.2.5 && \
+    ./configure --enable-mbstring --enable-inrl --with-curl=/usr/lib --with-apxs2=/usr/bin/apxs --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --with-zlib=shared --with-openssl && \
+    make && make install
+
+## composerをインストール
+RUN apk add --no-cache composer
+
+## composerをrootユーザーで実行をできるように以下の環境変数を設定
+ENV COMPOSER_ALLOW_SUPERUSER 1
+ENV COMPOSER_NO_INTERACTION 1
+
+# timezoneの設定
+RUN apk --update add tzdata && \
+    cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
+    echo "Asia/Tokyo" > /etc/timezone
+
+# 文字コードの設定
+ENV LANG ja_JP.UTF-8

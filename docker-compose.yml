@@ -1,0 +1,25 @@
+version: "3"
+services:
+  php:
+    image: tleokura/alpine-php-apache
+    ports:
+      - 80:80
+    volumes:
+      - ../okura-restful-api:/var/www/html/okura-restful-api
+      - ./docker/app/httpd.conf:/etc/apache2/httpd.conf
+      - ./docker/app/php.ini:/usr/local/lib/php.ini
+    command: >
+      bash -c "cd /var/www/html/okura-restful-api && composer install && mkdir -p /var/www/html/okura-restful-api/storage/framework/cache /var/www/html/okura-restful-api/storage/framework/sessions /var/www/html/okura-restful-api/storage/framework/views
+      && chmod -R a+w /var/www/html/ && chmod -R a+w /var/www/html/okura-restful-api/storage/framework/ /var/www/html/okura-restful-api/bootstrap/cache && /usr/sbin/httpd -DFOREGROUND"
+    tty: true
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: restful_api
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: docker
+      TZ: 'Asia/Tokyo'
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - 3306:3306
