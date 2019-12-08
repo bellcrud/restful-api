@@ -1,15 +1,19 @@
-##Docker課題2「ECSを使ったDockerコンテナデプロイ」  
+##Docker課題2「ECSを使ったDockerコンテナデプロイ」 
+ 
 
 ####概要  
+
 Docker課題1でECRにプッシュしたDockerイメージを、ECSにデプロイしてください。
 また、構築するにあたってクラスタとサービスの起動タイプは「EC2」を選択し、ECSインスタンスの数は2つ、その中で動作するタスクの数は2つにしてください。
 
 
 ####使用した技術  
+
 - Docker 
 - ECR
 
 ####ECR  
+
 
 |Repository|URI|
 |----------------|---------------------|
@@ -19,11 +23,13 @@ Docker課題1でECRにプッシュしたDockerイメージを、ECSにデプロ�
 
 ####ECS  
 
+
 |Cluster|Service|Task|
 |--------------------|------------------|--------------------|
 |okura-cluster2  |okura-service   |okura-task    |
 
 ####確認URL  
+
 http://okura-ecs-elb-1352259772.ap-northeast-1.elb.amazonaws.com:8080/login
 
 ####インフラ設計図  
