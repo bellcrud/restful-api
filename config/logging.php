@@ -32,8 +32,9 @@ return [
 	'channels' => [
 		'stack' => [
 			'driver'   => 'stack',
-			'channels' => [ 'single' ],
-		],
+			'channels' => [ 'single', 'batchLog', 'stdout'],
+            'ignore_exceptions' => false,
+        ],
 
 		'single' => [
 			'driver' => 'single',
@@ -77,7 +78,13 @@ return [
             'path'   => storage_path('logs/batch/batch.log'),
             'level'  => 'debug',
         ],
-
-	],
-
+        'stdout' => [
+            'driver' => 'monolog',
+            'handler' => Monolog\Handler\StreamHandler::class,
+            'level'  => 'debug',
+            'with' => [
+                'stream' => 'php://stdout',
+            ],
+        ],
+    ],
 ];
