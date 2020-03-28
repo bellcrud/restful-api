@@ -17,7 +17,7 @@ phases:
       - cd docker
 
       ## Dockerイメージのビルド
-      - docker build -t okura-restful-api:latest .
+      - docker build -t $REPOSITORY_URI:latest .
 
       ## DockerイメージのECRへのプッシュ
       - docker push $REPOSITORY_URI:latest
