@@ -24,4 +24,4 @@ phases:
 
 artifacts:
   ## buildの最後で作成したファイルをアーティファクトとして流す
-  files: imageDetail.jsons
+  files: imageDetail.json
