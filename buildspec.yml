@@ -13,6 +13,9 @@ phases:
       - REPOSITORY_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/okura-restful-api
   build:
     commands:
+
+      - cd docker
+
       ## Dockerイメージのビルド
       - docker build -t okura-restful-api:latest .
 
