@@ -1,8 +1,8 @@
 FROM tleokura/alpine-php-apache
 
-COPY okura-restful-api/ /var/www/html/okura-restful-api
-COPY okura-restful-api/docker/app/httpd.conf /etc/apache2/httpd.conf
-COPY okura-restful-api/docker/app/php.ini /usr/local/lib/php.ini
+COPY . /var/www/html/okura-restful-api
+COPY ./docker/app/httpd.conf /etc/apache2/httpd.conf
+COPY ./docker/app/php.ini /usr/local/lib/php.ini
 
 WORKDIR var/www/html/okura-restful-api
 RUN composer install
