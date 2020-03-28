@@ -18,10 +18,10 @@ phases:
 
       ## DockerイメージのECRへのプッシュ
       - docker push $REPOSITORY_URI:latest
-
-      ## ECS+CodeDeployにどのイメージを使用するか指示するためのファイルを作成
-      - printf '{"Version":"1.0","ImageURI":"%s"}' $IMAGE_REPOSITORY_NAME:$IMAGE_TAG > imageDetail.json
-
+  post_build:
+    commands:
+      - echo Writing image definitions file...
+      - printf '[{"name":"okura-restful-api","imageUri":"%s"}]' $REPOSITORY_URI:latest > imagedefinitions.json
 artifacts:
   ## buildの最後で作成したファイルをアーティファクトとして流す
-  files: imageDetail.json
+  files: imagedefinitions.json
