@@ -14,10 +14,10 @@ phases:
   build:
     commands:
       ## Dockerイメージのビルド
-      - docker build -t okura-restful-api:$IMAGE_TAG .
+      - docker build -t okura-restful-api:latest .
 
       ## DockerイメージのECRへのプッシュ
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - docker push $REPOSITORY_URI:latest
 
       ## ECS+CodeDeployにどのイメージを使用するか指示するためのファイルを作成
       - printf '{"Version":"1.0","ImageURI":"%s"}' $IMAGE_REPOSITORY_NAME:$IMAGE_TAG > imageDetail.json
