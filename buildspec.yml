@@ -10,7 +10,7 @@ phases:
       - IMAGE_TAG=$CODEBUILD_RESOLVED_SOURCE_VERSION
 
       ## ECRのURL
-      - REPOSITORY_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/okura-restful-api
+      - REPOSITORY_URI=720146896923.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/okura-restful-api
   build:
     commands:
 
