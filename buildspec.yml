@@ -14,14 +14,14 @@ phases:
   build:
     commands:
       ## Dockerイメージのビルド
-      - docker build -t $REPOSITORY_URI:latest .
+      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
 
       ## DockerイメージのECRへのプッシュ
-      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:
       - echo Writing image definitions file...
-      - printf '{"Version":"1.0","ImageURI":"%s"}' $IMAGE_REPOSITORY_NAME:latest > imageDetail.json
+      - printf '{"Version":"1.0","ImageURI":"%s"}' $REPOSITORY_URI:$IMAGE_TAG > imageDetail.json
 artifacts:
   ## buildの最後で作成したファイルをアーティファクトとして流す
   files:
