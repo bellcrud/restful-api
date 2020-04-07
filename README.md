@@ -34,4 +34,4 @@ CodePipeline、CodeBuildを使ってリポジトリにプッシュされたらEC
  - https://www.okurashoichi.com/login
 
 ### インフラ設計図  
-![インフラ設計図](https://bitbucket.org/teamlabengineering/okura-restful-api/raw/d2e4e7b5c3bf9b6b108f3e670d9d9ffa7dc91b82/document/%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E8%A8%AD%E8%A8%88%E5%9B%B3.png)
+![インフラ設計図](https://bitbucket.org/teamlabengineering/okura-restful-api/raw/8bdc365d089db13ee315d05426a36580e670d009/document/%E3%82%A4%E3%83%B3%E3%83%95%E3%83%A9%E8%A8%AD%E8%A8%88%E5%9B%B3.png)
