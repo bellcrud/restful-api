@@ -21,7 +21,7 @@ phases:
   post_build:
     commands:
       - echo Writing image definitions file...
-      - printf '[{"name":"hello-world", "imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imageDetail.json
+      - printf '[{"name":"okura-restful-api", "imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imageDetail.json
 artifacts:
   ## buildの最後で作成したファイルをアーティファクトとして流す
   files:
