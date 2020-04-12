@@ -22,6 +22,7 @@ phases:
     commands:
       - echo Writing image definitions file...
       - printf '[{"imageUri":"%s"}]' "$REPOSITORY_URI:$IMAGE_TAG" > imageDetail.json
+      - cat imageDetail.json
 artifacts:
   ## buildの最後で作成したファイルをアーティファクトとして流す
   files:
