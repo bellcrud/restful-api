@@ -9,7 +9,7 @@ services:
       - ./docker/app/httpd.conf:/etc/apache2/httpd.conf
       - ./docker/app/php.ini:/usr/local/lib/php.ini
     command: >
-      bash -c "cd /var/www/html/okura-restful-api && composer install && mkdir -p /var/www/html/okura-restful-api/storage/framework/cache /var/www/html/okura-restful-api/storage/framework/sessions /var/www/html/okura-restful-api/storage/framework/views
+      bash -c "cd /var/www/html/okura-restful-api && composer install && mkdir -p ./storage/framework/{cache,sessions,views}
       && chmod -R a+w /var/www/html/ && chmod -R a+w /var/www/html/okura-restful-api/storage/framework/ /var/www/html/okura-restful-api/bootstrap/cache && /usr/sbin/httpd -DFOREGROUND"
     tty: true
   mysql:
