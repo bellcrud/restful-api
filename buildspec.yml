@@ -29,4 +29,3 @@ artifacts:
 cache:
     paths:
         - '/var/www/html/okura-restful-api/vendor/**/*'
-
