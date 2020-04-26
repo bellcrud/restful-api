@@ -29,4 +29,3 @@ artifacts:
 cache:
     paths:
         - 'vendor/**/*'
-
