@@ -28,5 +28,4 @@ artifacts:
       - imageDetail.json
 cache:
     paths:
-        - './vendor/**/*'
-
+        - 'vendor/**/*'
