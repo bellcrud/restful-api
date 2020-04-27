@@ -12,7 +12,7 @@ phases:
 
       ## ECRのURL
       - REPOSITORY_URI=720146896923.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/okura-restful-api
- build:
+  build:
     commands:
       ## Dockerイメージのビルド
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
