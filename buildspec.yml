@@ -3,6 +3,7 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - cp -r ./cache_vedor/. ./vendor/
       ## ECRにログイン
       - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
 
@@ -11,7 +12,6 @@ phases:
 
       ## ECRのURL
       - REPOSITORY_URI=720146896923.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/okura-restful-api
-      - cp -r ./cache_vedor/. ./vendor/
  build:
     commands:
       ## Dockerイメージのビルド
