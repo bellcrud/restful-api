@@ -24,7 +24,7 @@ phases:
       - printf '[{"name":"okura-restful-api", "imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imageDetail.json
       - echo ====== Set Cache ======
       - ls -l
-      - cp -r /vendor/ /cache_vendor/
+      #- cp -r /vendor/ /cache_vendor/
 artifacts:
   ## buildの最後で作成したファイルをアーティファクトとして流す
   files:
