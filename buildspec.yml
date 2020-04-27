@@ -11,7 +11,9 @@ phases:
 
       ## ECRのURL
       - REPOSITORY_URI=720146896923.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/okura-restful-api
-  build:
+      
+      - cp -r ./cache_vendor/. ./vendor/
+ build:
     commands:
       ## Dockerイメージのビルド
       - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
@@ -22,10 +24,12 @@ phases:
     commands:
       - echo Writing image definitions file...
       - printf '[{"name":"okura-restful-api", "imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imageDetail.json
+      - echo ====== Set Cache ======
+      - cp -r ./vendor/.  ./cache_vendor/
 artifacts:
   ## buildの最後で作成したファイルをアーティファクトとして流す
   files:
       - imageDetail.json
 cache:
     paths:
-        - '/vendor/**/*'
+        - './cache_vendor/**/*'
