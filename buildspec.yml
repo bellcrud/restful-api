@@ -32,4 +32,3 @@ artifacts:
 cache:
     paths:
         - '/root/.composer/**/*'
-
