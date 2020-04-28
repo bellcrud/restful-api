@@ -29,7 +29,7 @@ artifacts:
   files:
       - imageDetail.json
 
-#cache:
-#    paths:
-#        - './cache_vendor/**/*'
+cache:
+    paths:
+        - '/root/.composer/**/*'
 
