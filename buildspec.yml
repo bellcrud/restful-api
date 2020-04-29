@@ -27,6 +27,6 @@ artifacts:
   files:
       - imageDetail.json
 
-cache:
-    paths:
-        - 'vendor/**/*'
+#cache:
+#    paths:
+#        - 'vendor/**/*'
