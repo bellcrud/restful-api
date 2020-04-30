@@ -28,4 +28,4 @@ artifacts:
       - imageDetail.json
 cache:
     paths:
-        - 'vendor/**/*'
+        - 'var/www/html/okura-restful-api/vendor/**/*'
