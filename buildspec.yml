@@ -27,5 +27,5 @@ artifacts:
   files:
       - imageDetail.json
 cache:
-    paths:
-     - '/root/.composer/**/*'
+  paths:
+    - '/root/.composer/**/*'
